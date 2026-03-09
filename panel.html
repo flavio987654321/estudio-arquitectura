@@ -30,6 +30,7 @@
 
       <section class="panel-editor">
         <h2 id="editorTitulo" style="margin-top:0;">Editar proyecto</h2>
+        <p id="editorHint" class="muted" style="margin:6px 0 12px;">Seleccioná un proyecto o creá uno nuevo para editar.</p>
 
         <form id="formProyecto" class="form-proyecto">
           <input type="hidden" id="p_id" />
@@ -106,11 +107,11 @@
           ========================== -->
           <h3>Planos</h3>
           <p class="muted small">
-            Subí imágenes de planos (jpg/png/webp). Se mostrarán al tocar “Ver planos”.
+            Subí imágenes o PDF de planos. Se mostrarán al tocar “Ver planos”.
           </p>
 
           <div class="form-row">
-            <input id="inputPlanos" type="file" accept="image/*" multiple />
+            <input id="inputPlanos" type="file" accept="image/*,application/pdf" multiple />
             <button class="btn" id="btnLimpiarPlanos" type="button">Limpiar nuevos</button>
           </div>
 

@@ -553,6 +553,9 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   const planosNext = document.getElementById("planosNext");
 
   const planos = Array.isArray(proyecto.planos) ? proyecto.planos : [];
+  const isPdf = (url) => /\.pdf($|\?)/i.test(url || "");
+  const planosPdf = planos.filter(isPdf);
+  const planosImgs = planos.filter(p => !isPdf(p));
   let planoIndex = 0;
 
   if (!planos.length && btnPlano) {
@@ -560,8 +563,9 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   }
 
   function mostrarPlano(i) {
-    planoIndex = (i + planos.length) % planos.length;
-    planosImg.src = planos[planoIndex];
+    if (!planosImgs.length) return;
+    planoIndex = (i + planosImgs.length) % planosImgs.length;
+    planosImg.src = planosImgs[planoIndex];
     [...planosThumbs.children].forEach(t => t.classList.remove("active"));
     planosThumbs.children[planoIndex]?.classList.add("active");
   }
@@ -569,14 +573,40 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   btnPlano?.addEventListener("click", e => {
     e.preventDefault();
     planosThumbs.innerHTML = "";
-    planos.forEach((src, i) => {
-      const t = document.createElement("img");
-      t.className = "thumb-img" + (i === 0 ? " active" : "");
-      t.src = src;
-      t.onclick = () => mostrarPlano(i);
-      planosThumbs.appendChild(t);
-    });
-    mostrarPlano(0);
+
+    // PDFs: botones para elegir
+    if (planosPdf.length) {
+      planosPdf.forEach((src, i) => {
+        const a = document.createElement("a");
+        a.href = src;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.className = "btn";
+        a.style.marginRight = "8px";
+        a.textContent = `Plano PDF ${i + 1}`;
+        planosThumbs.appendChild(a);
+      });
+    }
+
+    // ImÃ¡genes: visor con miniaturas
+    if (planosImgs.length) {
+      planosImgs.forEach((src, i) => {
+        const t = document.createElement("img");
+        t.className = "thumb-img" + (i === 0 ? " active" : "");
+        t.src = src;
+        t.onclick = () => mostrarPlano(i);
+        planosThumbs.appendChild(t);
+      });
+      if (planosImg) planosImg.style.display = "";
+      if (planosPrev) planosPrev.style.display = "";
+      if (planosNext) planosNext.style.display = "";
+      mostrarPlano(0);
+    } else {
+      if (planosImg) planosImg.style.display = "none";
+      if (planosPrev) planosPrev.style.display = "none";
+      if (planosNext) planosNext.style.display = "none";
+    }
+
     panelPlanos.classList.add("open");
   });
 
@@ -598,14 +628,14 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
 
     if (e.key === "ArrowLeft") {
       if (lightboxOpen) moveLightbox(-1);
-      if (planosOpen && planos.length) {
+      if (planosOpen && planosImgs.length) {
         mostrarPlano(planoIndex - 1);
       }
     }
 
     if (e.key === "ArrowRight") {
       if (lightboxOpen) moveLightbox(1);
-      if (planosOpen && planos.length) {
+      if (planosOpen && planosImgs.length) {
         mostrarPlano(planoIndex + 1);
       }
     }
@@ -635,7 +665,7 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
         moveLightbox(1);
       }
     } else if (tipo === "planos") {
-      if (!planos.length) return;
+      if (!planosImgs.length) return;
       if (dx > 0) {
         mostrarPlano(planoIndex - 1);
       } else {

@@ -33,6 +33,15 @@ function slugify(str) {
     .replace(/-+/g, "-");
 }
 
+function isPdfUrl(url) {
+  return /\.pdf($|\?)/i.test(url || "");
+}
+
+function isPdfFile(file) {
+  if (!file) return false;
+  return file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
+}
+
 async function cargarProyectosDesdeFirestore() {
   const snap = await getDocs(collection(db, "proyectos"));
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -54,6 +63,8 @@ function iniciarPanel(user) {
   const btnLogout = document.getElementById("btnLogout");
   const btnNuevo = document.getElementById("btnNuevo");
   const listaProyectos = document.getElementById("listaProyectos");
+  const editor = document.querySelector(".panel-editor");
+  const editorHint = document.getElementById("editorHint");
 
   const form = document.getElementById("formProyecto");
   const msg = document.getElementById("panelMsg");
@@ -106,8 +117,19 @@ function iniciarPanel(user) {
   let unidadPdfNuevo = null;
 
   function setMsg(text) {
+    if (!msg) return;
     msg.textContent = text || "";
     if (text) setTimeout(() => (msg.textContent = ""), 2200);
+  }
+
+  function setEditorEnabled(enabled) {
+    if (!editor) return;
+    editor.classList.toggle("is-disabled", !enabled);
+    if (editorHint) {
+      editorHint.textContent = enabled
+        ? "Editando proyecto."
+        : "Seleccioná un proyecto o creá uno nuevo para editar.";
+    }
   }
 
   function renderLista() {
@@ -224,11 +246,19 @@ function iniciarPanel(user) {
     planosExistentes.forEach((url, idx) => {
       const div = document.createElement("div");
       div.className = "foto-item";
-      div.innerHTML = `
-        <img src="${url}" alt="plano">
-        <button type="button" class="btn-x" title="Quitar">✕</button>
-        <div class="tag">Guardado</div>
-      `;
+      if (isPdfUrl(url)) {
+        div.innerHTML = `
+          <div class="tag">PDF</div>
+          <div style="padding:10px; font-weight:700; font-size:13px;">Plano PDF</div>
+          <button type="button" class="btn-x" title="Quitar">&#10006;</button>
+        `;
+      } else {
+        div.innerHTML = `
+          <img src="${url}" alt="plano">
+          <button type="button" class="btn-x" title="Quitar">&#10006;</button>
+          <div class="tag">Guardado</div>
+        `;
+      }
       div.querySelector(".btn-x").onclick = () => {
         planosExistentes.splice(idx, 1);
 
@@ -246,11 +276,19 @@ function iniciarPanel(user) {
       const blobUrl = URL.createObjectURL(file);
       const div = document.createElement("div");
       div.className = "foto-item";
-      div.innerHTML = `
-        <img src="${blobUrl}" alt="plano nuevo">
-        <button type="button" class="btn-x" title="Quitar">✕</button>
-        <div class="tag">Nuevo</div>
-      `;
+      if (isPdfFile(file)) {
+        div.innerHTML = `
+          <div class="tag">PDF</div>
+          <div style="padding:10px; font-weight:700; font-size:13px;">Plano PDF</div>
+          <button type="button" class="btn-x" title="Quitar">&#10006;</button>
+        `;
+      } else {
+        div.innerHTML = `
+          <img src="${blobUrl}" alt="plano nuevo">
+          <button type="button" class="btn-x" title="Quitar">&#10006;</button>
+          <div class="tag">Nuevo</div>
+        `;
+      }
       div.querySelector(".btn-x").onclick = () => {
         planosNuevos.splice(idx, 1);
         renderPlanosPreview();
@@ -258,7 +296,6 @@ function iniciarPanel(user) {
       previewPlanos.appendChild(div);
     });
   }
-
   inputFotos?.addEventListener("change", () => {
     const files = Array.from(inputFotos.files || []);
     if (!files.length) return;
@@ -269,7 +306,14 @@ function iniciarPanel(user) {
       alert(`Algunas fotos superan ${maxMB}MB y no se agregaron.`);
     }
 
-    fotosNuevas.push(...ok);
+    const MAX_FOTOS = 10;
+    const disponibles = MAX_FOTOS - (fotosExistentes.length + fotosNuevas.length);
+    if (disponibles <= 0) {
+      alert(`Máximo ${MAX_FOTOS} fotos por proyecto.`);
+      inputFotos.value = "";
+      return;
+    }
+    fotosNuevas.push(...ok.slice(0, disponibles));
     inputFotos.value = "";
     renderFotosPreview();
   });
@@ -302,7 +346,11 @@ function iniciarPanel(user) {
   u_fotos?.addEventListener("change", () => {
     const files = Array.from(u_fotos.files || []);
     if (!files.length) return;
-    unidadFotosNuevas = files;
+    const MAX_FOTOS = 10;
+    unidadFotosNuevas = files.slice(0, MAX_FOTOS);
+    if (files.length > MAX_FOTOS) {
+      alert(`Máximo ${MAX_FOTOS} fotos por unidad.`);
+    }
   });
 
   u_pdf?.addEventListener("change", () => {
@@ -337,9 +385,11 @@ function iniciarPanel(user) {
     const p = getActivo();
     if (!p) {
       limpiarEditor();
+      setEditorEnabled(false);
       return;
     }
 
+    setEditorEnabled(true);
     p_id.value = p.id || "";
     p_nombre.value = p.nombre || "";
     p_direccion.value = p.direccion || "";
@@ -382,6 +432,7 @@ function iniciarPanel(user) {
       mensajeWpp: "",
       calidadConstructiva: [],
       destacado: false,
+      owner: auth.currentUser?.uid || "",
       fotos: [],
       planos: [],     // 👈 NUEVO
       unidades: []
@@ -394,9 +445,12 @@ function iniciarPanel(user) {
   });
 
 // Agregar unidad
-btnAgregarUnidad.addEventListener("click", () => {
+btnAgregarUnidad?.addEventListener("click", () => {
   const p = getActivo();
-  if (!p) return;
+  if (!p) {
+    setMsg("Seleccioná un proyecto primero.");
+    return;
+  }
 
   const nom = u_nombre.value.trim();
   const amb = u_amb.value.trim();
@@ -441,6 +495,7 @@ btnAgregarUnidad.addEventListener("click", () => {
   if (u_pdf) u_pdf.value = "";
 
   renderUnidades(p);
+  setMsg("Unidad agregada. Recordá guardar cambios.");
 }); 
 
   // Guardar cambios del proyecto
@@ -472,6 +527,7 @@ btnAgregarUnidad.addEventListener("click", () => {
       p.destacado = !!p_destacado.checked;
       p.whatsapp = (p_whatsapp.value || "").trim();
       p.mensajeWpp = (p_mensajeWpp.value || "").trim();
+      if (!p.owner) p.owner = auth.currentUser?.uid || "";
 
       // Mantener existentes + nuevas (archivos)
       p.fotos = [...fotosExistentes];
@@ -622,4 +678,5 @@ deleteDoc(doc(db, "proyectos", p.id))
   })();
   }
 });
+
 

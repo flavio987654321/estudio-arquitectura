@@ -4,10 +4,15 @@
   padding: 0;
 }
 
+img, video, iframe{
+  max-width: 100%;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   background: #f5f5f5;
   color: #222;
+  overflow-x: hidden;
 }
 
 header {
@@ -226,6 +231,7 @@ header {
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.08);
   margin-bottom: 10px;
+  display: block;
 }
 
 .acciones{
@@ -330,7 +336,8 @@ header {
 }
 
 .galeria-main{
-  height: 320px;
+  height: auto;
+  aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0,0,0,0.08);
@@ -343,8 +350,9 @@ header {
 .galeria-main img{
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
+  background: #f0f0f0;
 }
 
 .galeria-thumbs{
@@ -355,6 +363,7 @@ header {
 .galeria-thumbs{
   overflow-x: auto;
   scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 
 .thumb-img{
@@ -494,6 +503,14 @@ header {
 .panel-wrap{ max-width: 1200px; margin: 25px auto; padding: 0 20px; }
 .panel-grid{ display:grid; grid-template-columns: 320px 1fr; gap:18px; }
 .panel-sidebar, .panel-editor{ background:#fff; border:1px solid #eee; border-radius:12px; padding:16px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+
+.panel-editor.is-disabled{
+  opacity: 0.6;
+}
+
+.panel-editor.is-disabled .form-proyecto{
+  pointer-events: none;
+}
 .lista-proyectos{ display:grid; gap:10px; margin-top:12px; }
 .item-proyecto{ text-align:left; padding:12px; border:1px solid #eee; border-radius:10px; background:#fafafa; cursor:pointer; }
 .item-proyecto.active{ border-color:#111; background:#fff; }
@@ -628,6 +645,60 @@ header {
 @media (max-width: 720px){
   .form-row{
     grid-template-columns: 1fr;
+  }
+
+  .unidades-form input,
+  .unidades-form select{
+    min-height: 44px;
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .precio-input{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Panel - Unidades: forzar columnas en móvil (evita inputs "enanos") */
+@media (max-width: 900px){
+  .unidades-form{
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "unidad"
+      "amb"
+      "metros"
+      "precio"
+      "piso"
+      "estado";
+  }
+
+  .precio-input{
+    width: 100%;
+    grid-template-columns: 1fr !important;
+  }
+
+  #u_nombre,
+  #u_amb,
+  #u_metros,
+  #u_piso,
+  #u_estado{
+    width: 100%;
+  }
+}
+
+/* Panel - Unidades: refuerzo extra para móviles */
+@media (max-width: 1024px){
+  .panel-editor .unidades-form{
+    grid-template-columns: 1fr !important;
+  }
+
+  .panel-editor .unidades-form > *{
+    min-width: 0;
+  }
+
+  .panel-editor .unidades-form input,
+  .panel-editor .unidades-form select{
+    width: 100% !important;
   }
 }
 
@@ -1021,12 +1092,64 @@ header {
 /* Planos: que se vean completos */
 #panelPlanos img{
   object-fit: contain;
+  max-height: 70vh;
+  z-index: 1;
 }
 
 #panelPlanos .galeria-thumbs{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
   overflow-x: auto;
   padding-bottom: 6px;
   scrollbar-width: thin;
+}
+
+#panelPlanos .galeria-thumbs .btn{
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px){
+  #panelPlanos .galeria-thumbs{
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* En el lightbox de planos, dejar los PDFs visibles debajo */
+#panelPlanos{
+  position: fixed;
+  padding-bottom: 90px;
+}
+
+#panelPlanos .galeria-thumbs{
+  position: fixed;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10001;
+  background: rgba(0,0,0,0.45);
+  padding: 10px;
+  border-radius: 12px;
+  pointer-events: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+#panelPlanos .galeria-thumbs > *{
+  scroll-snap-align: start;
+}
+
+#panelPlanos .galeria-thumbs::-webkit-scrollbar{
+  height: 6px;
+}
+
+#panelPlanos .galeria-thumbs .btn{
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
 }
 
 /* Slider pequeño del hero */
@@ -1452,6 +1575,9 @@ header {
   .galeria-main{
     height: 240px;
   }
+  .galeria-main img{
+    object-fit: cover;
+  }
 }
 
 @media (max-width: 640px){
@@ -1461,6 +1587,78 @@ header {
     left: auto;
     right: 14px;
     bottom: 14px;
+  }
+}
+
+/* =========================
+   FIX MOBILE: PROYECTO
+========================= */
+.hero-proyecto > *{
+  min-width: 0;
+}
+
+.topbar-proyecto{
+  padding: 14px 16px;
+}
+
+.topbar-proyecto h1{
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+@media (max-width: 640px){
+  .topbar-proyecto{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .topbar-proyecto a{
+    align-self: flex-start;
+  }
+
+  .proyecto-detalle{
+    padding: 22px 16px;
+  }
+
+  .hero-proyecto{
+    gap: 16px;
+  }
+
+  .mapa iframe{
+    height: 220px;
+  }
+
+  .galeria-thumbs{
+    padding-bottom: 6px;
+  }
+
+  .galeria-main{
+    aspect-ratio: 4 / 3;
+    height: auto;
+  }
+
+  .galeria-main img{
+    object-fit: cover;
+  }
+
+  .thumb-img{
+    width: 64px;
+    height: 48px;
+  }
+
+  .acciones{
+    width: 100%;
+  }
+
+  .acciones .btn{
+    width: 100%;
+    justify-content: center;
+  }
+
+  .col-izq h2,
+  .info-proyecto h2{
+    font-size: 1.6rem;
   }
 }
 
