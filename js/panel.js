@@ -86,6 +86,7 @@ function iniciarPanel(user) {
   const u_amb = document.getElementById("u_amb");
   const u_metros = document.getElementById("u_metros");
   const u_precio = document.getElementById("u_precio");
+  const u_moneda = document.getElementById("u_moneda");
   const u_piso = document.getElementById("u_piso");
   const u_estado = document.getElementById("u_estado");
   const btnAgregarUnidad = document.getElementById("btnAgregarUnidad");
@@ -131,12 +132,15 @@ function iniciarPanel(user) {
     const row = document.createElement("div");
     row.className = "unidad-row";
 
+    const moneda = (u.moneda || "USD").toUpperCase();
+    const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
+
     row.innerHTML = `
       <div>
         <strong>${u.nombre}</strong>
         <div class="info">🧱 ${u.piso || "Sin piso"}</div>
         <div class="info">
-          🛏️ ${u.ambientes || "-"} amb · 📐 ${u.metros || "-"} m² · 💰 ${u.precio || "Consultar"}
+          🛏️ ${u.ambientes || "-"} amb · 📐 ${u.metros || "-"} m² · 💰 ${precioTxt}
         </div>
       </div>
 
@@ -364,6 +368,7 @@ btnAgregarUnidad.addEventListener("click", () => {
   const amb = u_amb.value.trim();
   const met = u_metros.value.trim();
   const pre = u_precio.value.trim();
+  const mon = (u_moneda?.value || "USD").trim();
   const pis = (u_piso?.value || "").trim();
   const est = u_estado.value;
 
@@ -380,6 +385,7 @@ btnAgregarUnidad.addEventListener("click", () => {
     ambientes: amb,
     metros: met,
     precio: pre,
+    moneda: mon,
     estado: est
   });
 
@@ -388,6 +394,7 @@ btnAgregarUnidad.addEventListener("click", () => {
   u_amb.value = "";
   u_metros.value = "";
   u_precio.value = "";
+  if (u_moneda) u_moneda.value = "USD";
   if (u_piso) u_piso.value = "Planta baja";
   u_estado.value = "disponible";
 

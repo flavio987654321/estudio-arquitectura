@@ -167,6 +167,23 @@ header {
   gap: 12px;
 }
 
+.unidades-piso{
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.piso-title{
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f3f4f6;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111;
+}
+
 .estado{
   padding: 6px 12px;
   border-radius: 999px;
@@ -206,6 +223,11 @@ header {
 .galeria-thumbs{
   display: flex;
   gap: 10px;
+}
+
+.galeria-thumbs{
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .thumb-img{
@@ -271,6 +293,29 @@ header {
   max-height: 90vh;
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+
+.lightbox .nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.lightbox .nav.prev{ left: 18px; }
+.lightbox .nav.next{ right: 18px; }
+
+.lightbox .nav:hover{
+  background: rgba(255,255,255,0.25);
 }
 
 .lightbox-close{
@@ -637,6 +682,12 @@ header {
   .features-grid{ grid-template-columns: 1fr; }
 }
 
+@media (max-width: 900px){
+  .hero-proyecto{
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ===== FIX: menú del index (evita choque con .nav de la galería) ===== */
 .topnav{
   display:flex;
@@ -966,6 +1017,16 @@ header {
   align-items: center;
 }
 
+.precio-input{
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 8px;
+}
+
+.precio-input select{
+  width: 100%;
+}
+
 .unidad-row strong{
   font-size: 0.95rem;
   font-weight: 700;
@@ -997,7 +1058,8 @@ header {
 ========================= */
 
 .unidad{
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
   padding: 14px 18px;
@@ -1009,7 +1071,6 @@ header {
 
 /* nombre */
 .unidad strong{
-  order: 1;
   white-space: nowrap;
   font-weight: 700;
   font-size: 0.95rem;
@@ -1018,7 +1079,6 @@ header {
 
 /* info al medio */
 .unidad-info{
-  order: 2;
   display: flex;
   gap: 10px;
   flex-wrap: nowrap;
@@ -1035,29 +1095,62 @@ header {
   font-size: 0.85rem;
 }
 
+.btn-consultar{
+  background: #0b7a43;
+  color: #fff;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
 /* =========================
    FIX DEFINITIVO: estado a la derecha
 ========================= */
 
-.unidad{
-  position: relative;
+.unidad-actions{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
 }
 
-/* badge de estado */
 .unidad .estado{
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
+  transform: none;
   white-space: nowrap;
 }
 
 /* MOBILE: el estado vuelve al flujo */
 @media (max-width: 640px){
-  .unidad .estado{
-    position: static;
-    transform: none;
+  .btn-consultar{
     margin-left: 0;
+  }
+  .btn-consultar{
+    width: 100%;
+    justify-content: center;
+  }
+  .unidad{
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .unidad-actions{
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .unidad-info{
+    flex-wrap: wrap;
+  }
+  .unidad-info span{
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 640px){
+  .galeria-main{
+    height: 240px;
   }
 }
 

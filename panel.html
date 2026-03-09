@@ -107,7 +107,13 @@
             <input id="u_nombre" type="text" placeholder="Unidad (ej: A)" />
             <input id="u_amb" type="number" placeholder="Ambientes" />
            <input id="u_metros" type="number" placeholder="m²" />
-           <input id="u_precio" type="text" placeholder="Precio (ej: USD 95.000)" />
+           <div class="precio-input">
+             <select id="u_moneda">
+               <option value="USD">USD</option>
+               <option value="ARS">ARS</option>
+             </select>
+             <input id="u_precio" type="text" placeholder="Precio (ej: 95.000)" />
+           </div>
             <select id="u_piso">
               <option value="Planta baja">Planta baja</option>
               <option value="1° piso">1° piso</option>

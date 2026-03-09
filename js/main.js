@@ -105,7 +105,34 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
     grupos[key].push(u);
   });
 
-  Object.keys(grupos).forEach(piso => {
+  const ordenPisos = [
+    "Planta baja",
+    "1° piso",
+    "2° piso",
+    "3° piso",
+    "4° piso",
+    "5° piso",
+    "6° piso",
+    "7° piso",
+    "8° piso",
+    "9° piso",
+    "10° piso",
+    "Cocheras",
+    "Terraza",
+    "Otro",
+    "Sin piso"
+  ];
+
+  const ordenarPisos = (a, b) => {
+    const ia = ordenPisos.indexOf(a);
+    const ib = ordenPisos.indexOf(b);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+    return a.localeCompare(b, "es");
+  };
+
+  Object.keys(grupos).sort(ordenarPisos).forEach(piso => {
     const bloque = document.createElement("div");
     bloque.className = "unidades-piso";
     bloque.innerHTML = `<h4 class="piso-title">${piso}</h4>`;
@@ -114,20 +141,38 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
       const div = document.createElement("div");
       div.className = "unidad";
 
+      const moneda = (u.moneda || "USD").toUpperCase();
+      const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
+      const wpp = proyecto.whatsapp || "";
+      const baseMsg = proyecto.mensajeWpp || `Hola! Quiero info sobre ${proyecto.nombre}.`;
+      const extra = [
+        `Unidad: ${u.nombre || "-"}`,
+        `Piso: ${u.piso || "-"}`,
+        `Ambientes: ${u.ambientes || "-"}`,
+        `Metros: ${u.metros || "-"} m²`,
+        `Precio: ${precioTxt}`
+      ].join(" | ");
+      const wppMsg = encodeURIComponent(`${baseMsg} (${extra})`);
+      const wppHref = wpp ? `https://wa.me/${wpp}?text=${wppMsg}` : "";
+      const mostrarConsultar = wppHref && (u.estado || "").toLowerCase() !== "vendida";
+
       div.innerHTML = `
         <div class="unidad-header">
           <strong>${u.nombre || "Unidad"}</strong>
-          <span class="estado ${u.estado || "disponible"}">
-            ${u.estado || "disponible"}
-          </span>
         </div>
 
         <div class="unidad-info">
           <span>🛏️ ${u.ambientes || "-"} amb</span>
           <span>📐 ${u.metros || "-"} m²</span>
-          <span>💰 ${u.precio || "Consultar"}</span>
+          <span>💰 ${precioTxt}</span>
         </div>
 
+        <div class="unidad-actions">
+          ${mostrarConsultar ? `<a class="btn btn-consultar" href="${wppHref}" target="_blank" rel="noopener">💬 Consultar</a>` : ""}
+          <span class="estado ${u.estado || "disponible"}">
+            ${u.estado || "disponible"}
+          </span>
+        </div>
         ${u.plano ? `<button class="btn-plano">📄 Ver plano</button>` : ""}
       `;
 
@@ -180,6 +225,8 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = document.getElementById("lightboxImg");
   const lightboxClose = document.getElementById("lightboxClose");
+  const lightboxPrev = document.getElementById("lightboxPrev");
+  const lightboxNext = document.getElementById("lightboxNext");
 
   img.addEventListener("click", () => {
     lightboxImg.src = img.src;
@@ -187,6 +234,16 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   });
   lightboxClose?.addEventListener("click", () => lightbox.classList.remove("open"));
   lightbox?.addEventListener("click", e => e.target === lightbox && lightbox.classList.remove("open"));
+  lightboxPrev?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    show(index - 1);
+    lightboxImg.src = img.src;
+  });
+  lightboxNext?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    show(index + 1);
+    lightboxImg.src = img.src;
+  });
 
   // ==================================================
   // 4) PLANOS (modal)
@@ -231,6 +288,77 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   panelPlanos?.addEventListener("click", e => e.target === panelPlanos && panelPlanos.classList.remove("open"));
   planosPrev?.addEventListener("click", () => mostrarPlano(planoIndex - 1));
   planosNext?.addEventListener("click", () => mostrarPlano(planoIndex + 1));
+
+  document.addEventListener("keydown", (e) => {
+    const lightboxOpen = lightbox?.classList.contains("open");
+    const planosOpen = panelPlanos?.classList.contains("open");
+    if (!lightboxOpen && !planosOpen) return;
+
+    if (e.key === "Escape") {
+      if (lightboxOpen) lightbox.classList.remove("open");
+      if (planosOpen) panelPlanos.classList.remove("open");
+      return;
+    }
+
+    if (e.key === "ArrowLeft") {
+      if (lightboxOpen) {
+        show(index - 1);
+        lightboxImg.src = img.src;
+      }
+      if (planosOpen && planos.length) {
+        mostrarPlano(planoIndex - 1);
+      }
+    }
+
+    if (e.key === "ArrowRight") {
+      if (lightboxOpen) {
+        show(index + 1);
+        lightboxImg.src = img.src;
+      }
+      if (planosOpen && planos.length) {
+        mostrarPlano(planoIndex + 1);
+      }
+    }
+  });
+
+  // Swipe (móvil) para fotos y planos
+  const SWIPE_MIN = 40;
+  let startX = 0;
+  let startY = 0;
+
+  function onTouchStart(e) {
+    const t = e.changedTouches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+  }
+
+  function onTouchEnd(e, tipo) {
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    if (Math.abs(dx) < SWIPE_MIN || Math.abs(dx) < Math.abs(dy)) return;
+
+    if (tipo === "lightbox") {
+      if (dx > 0) {
+        show(index - 1);
+      } else {
+        show(index + 1);
+      }
+      lightboxImg.src = img.src;
+    } else if (tipo === "planos") {
+      if (!planos.length) return;
+      if (dx > 0) {
+        mostrarPlano(planoIndex - 1);
+      } else {
+        mostrarPlano(planoIndex + 1);
+      }
+    }
+  }
+
+  lightbox?.addEventListener("touchstart", onTouchStart, { passive: true });
+  lightbox?.addEventListener("touchend", (e) => onTouchEnd(e, "lightbox"), { passive: true });
+  panelPlanos?.addEventListener("touchstart", onTouchStart, { passive: true });
+  panelPlanos?.addEventListener("touchend", (e) => onTouchEnd(e, "planos"), { passive: true });
 
 });
 
