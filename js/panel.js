@@ -64,6 +64,8 @@ function iniciarPanel(user) {
   const p_descripcion = document.getElementById("p_descripcion");
   const p_mapa = document.getElementById("p_mapa");
   const p_puntos = document.getElementById("p_puntos");
+  const p_calidad = document.getElementById("p_calidad");
+  const p_destacado = document.getElementById("p_destacado");
   const p_whatsapp = document.getElementById("p_whatsapp");
   const p_mensajeWpp = document.getElementById("p_mensajeWpp");
 
@@ -93,11 +95,15 @@ function iniciarPanel(user) {
   const u_estado = document.getElementById("u_estado");
   const btnAgregarUnidad = document.getElementById("btnAgregarUnidad");
   const listaUnidadesPanel = document.getElementById("listaUnidadesPanel");
+  const u_fotos = document.getElementById("u_fotos");
+  const u_pdf = document.getElementById("u_pdf");
 
   const btnEliminar = document.getElementById("btnEliminar");
 
   let proyectos = [];
   let activoId = null;
+  let unidadFotosNuevas = [];
+  let unidadPdfNuevo = null;
 
   function setMsg(text) {
     msg.textContent = text || "";
@@ -111,7 +117,7 @@ function iniciarPanel(user) {
       item.type = "button";
       item.className = "item-proyecto" + (p.id === activoId ? " active" : "");
       item.innerHTML = `
-        <div class="item-title">${p.nombre || "Proyecto"}</div>
+        <div class="item-title">${p.nombre || "Proyecto"} ${p.destacado ? "⭐" : ""}</div>
         <div class="item-sub">${p.ubicacion || ""}</div>
       `;
       item.addEventListener("click", () => {
@@ -136,6 +142,8 @@ function iniciarPanel(user) {
 
     const moneda = (u.moneda || "USD").toUpperCase();
     const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
+    const fotosCount = Array.isArray(u.fotos) ? u.fotos.length : (u.__fotosFiles?.length || 0);
+    const hasPdf = !!u.pdfUrl || !!u.__pdfFile;
 
     row.innerHTML = `
       <div>
@@ -143,6 +151,9 @@ function iniciarPanel(user) {
         <div class="info">🧱 ${u.piso || "Sin piso"}</div>
         <div class="info">
           🛏️ ${u.ambientes || "-"} amb · 📐 ${u.metros || "-"} m² · 💰 ${precioTxt}
+        </div>
+        <div class="info">
+          📷 ${fotosCount} fotos · 📄 ${hasPdf ? "PDF" : "sin PDF"}
         </div>
       </div>
 
@@ -288,6 +299,17 @@ function iniciarPanel(user) {
     renderPlanosPreview();
   });
 
+  u_fotos?.addEventListener("change", () => {
+    const files = Array.from(u_fotos.files || []);
+    if (!files.length) return;
+    unidadFotosNuevas = files;
+  });
+
+  u_pdf?.addEventListener("change", () => {
+    const file = u_pdf.files?.[0] || null;
+    unidadPdfNuevo = file;
+  });
+
   function limpiarEditor() {
     p_id.value = "";
     p_nombre.value = "";
@@ -295,6 +317,8 @@ function iniciarPanel(user) {
     p_descripcion.value = "";
     p_mapa.value = "";
     p_puntos.value = "";
+    p_calidad.value = "";
+    p_destacado.checked = false;
     p_whatsapp.value = "";
     p_mensajeWpp.value = "";
 
@@ -322,6 +346,8 @@ function iniciarPanel(user) {
     p_descripcion.value = p.descripcion || "";
     p_mapa.value = p.mapaEmbed || "";
     p_puntos.value = Array.isArray(p.puntosClave) ? p.puntosClave.join("\n") : "";
+    p_calidad.value = Array.isArray(p.calidadConstructiva) ? p.calidadConstructiva.join("\n") : "";
+    p_destacado.checked = !!p.destacado;
     p_whatsapp.value = p.whatsapp || "";
     p_mensajeWpp.value = p.mensajeWpp || "";
 
@@ -354,6 +380,8 @@ function iniciarPanel(user) {
       descripcion: "",
       whatsapp: "",
       mensajeWpp: "",
+      calidadConstructiva: [],
+      destacado: false,
       fotos: [],
       planos: [],     // 👈 NUEVO
       unidades: []
@@ -377,6 +405,8 @@ btnAgregarUnidad.addEventListener("click", () => {
   const mon = (u_moneda?.value || "USD").trim();
   const pis = (u_piso?.value || "").trim();
   const est = u_estado.value;
+  const fotosFiles = [...unidadFotosNuevas];
+  const pdfFile = unidadPdfNuevo;
 
   // mínimo requerido
   if (!nom) {
@@ -392,7 +422,9 @@ btnAgregarUnidad.addEventListener("click", () => {
     metros: met,
     precio: pre,
     moneda: mon,
-    estado: est
+    estado: est,
+    __fotosFiles: fotosFiles,
+    __pdfFile: pdfFile
   });
 
   // limpiar formulario
@@ -403,6 +435,10 @@ btnAgregarUnidad.addEventListener("click", () => {
   if (u_moneda) u_moneda.value = "USD";
   if (u_piso) u_piso.value = "Planta baja";
   u_estado.value = "disponible";
+  unidadFotosNuevas = [];
+  unidadPdfNuevo = null;
+  if (u_fotos) u_fotos.value = "";
+  if (u_pdf) u_pdf.value = "";
 
   renderUnidades(p);
 }); 
@@ -429,6 +465,11 @@ btnAgregarUnidad.addEventListener("click", () => {
         .split("\n")
         .map(x => x.trim())
         .filter(Boolean);
+      p.calidadConstructiva = (p_calidad.value || "")
+        .split("\n")
+        .map(x => x.trim())
+        .filter(Boolean);
+      p.destacado = !!p_destacado.checked;
       p.whatsapp = (p_whatsapp.value || "").trim();
       p.mensajeWpp = (p_mensajeWpp.value || "").trim();
 
@@ -446,13 +487,15 @@ btnAgregarUnidad.addEventListener("click", () => {
       }
 
       // ===== Subir imágenes a Storage y guardar SOLO URLs =====
+      const ownerUid = auth.currentUser?.uid;
+      const basePath = ownerUid ? `proyectos/${ownerUid}/${p.id}` : `proyectos/${p.id}`;
       const fotosUrls = [...p.fotos];
       for (let i = 0; i < fotosNuevas.length; i++) {
         const file = fotosNuevas[i];
         const safeName = `${Date.now()}-${i}-${file.name}`.replace(/\s+/g, "-");
         const url = await subirArchivoAStorage(
           file,
-          `proyectos/${p.id}/fotos/${safeName}`
+          `${basePath}/fotos/${safeName}`
         );
         fotosUrls.push(url);
       }
@@ -463,10 +506,48 @@ btnAgregarUnidad.addEventListener("click", () => {
         const safeName = `${Date.now()}-${i}-${file.name}`.replace(/\s+/g, "-");
         const url = await subirArchivoAStorage(
           file,
-          `proyectos/${p.id}/planos/${safeName}`
+          `${basePath}/planos/${safeName}`
         );
         planosUrls.push(url);
       }
+
+      // ===== Subir adjuntos por unidad (fotos + PDF) =====
+      const unidadesFinal = [];
+      for (let i = 0; i < (p.unidades || []).length; i++) {
+        const u = p.unidades[i];
+        const uOut = { ...u };
+        const slugU = slugify(u.nombre || `unidad-${i + 1}`);
+
+        if (Array.isArray(uOut.__fotosFiles) && uOut.__fotosFiles.length) {
+          const fotosUrls = Array.isArray(uOut.fotos) ? [...uOut.fotos] : [];
+          for (let j = 0; j < uOut.__fotosFiles.length; j++) {
+            const file = uOut.__fotosFiles[j];
+            const safeName = `${Date.now()}-${j}-${file.name}`.replace(/\s+/g, "-");
+            const url = await subirArchivoAStorage(
+              file,
+              `${basePath}/unidades/${slugU}-${i}/fotos/${safeName}`
+            );
+            fotosUrls.push(url);
+          }
+          uOut.fotos = fotosUrls;
+        }
+
+        if (uOut.__pdfFile) {
+          const file = uOut.__pdfFile;
+          const safeName = `${Date.now()}-${file.name}`.replace(/\s+/g, "-");
+          const url = await subirArchivoAStorage(
+            file,
+            `${basePath}/unidades/${slugU}-${i}/pdf/${safeName}`
+          );
+          uOut.pdfUrl = url;
+        }
+
+        delete uOut.__fotosFiles;
+        delete uOut.__pdfFile;
+        unidadesFinal.push(uOut);
+      }
+
+      p.unidades = unidadesFinal;
 
       // ===== Guardar en Firestore SIN base64 =====
       await setDoc(

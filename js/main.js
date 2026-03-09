@@ -27,7 +27,10 @@ if (grid && PROYECTOS_APP.length) {
 
   grid.innerHTML = "";
 
-  PROYECTOS_APP.forEach(p => {
+  PROYECTOS_APP
+    .slice()
+    .sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0))
+    .forEach(p => {
     const card = document.createElement("article");
     card.className = "card-proyecto";
 
@@ -42,6 +45,13 @@ if (grid && PROYECTOS_APP.length) {
   }
 
     card.appendChild(imgDiv);
+
+    if (p.destacado) {
+      const badge = document.createElement("div");
+      badge.className = "badge-destacado";
+      badge.textContent = "Destacado";
+      card.appendChild(badge);
+    }
 
     const h4 = document.createElement("h4");
     h4.textContent = p.nombre || "Proyecto";
@@ -77,6 +87,8 @@ if (grid && PROYECTOS_APP.length) {
   const ubic = document.getElementById("ubicacionProyecto");
   const desc = document.getElementById("descProyecto");
   const listaUnidades = document.getElementById("listaUnidades");
+  const calidadWrap = document.getElementById("calidadProyecto");
+  const calidadSeccion = document.getElementById("calidadSeccion");
 
   const wppFloat = document.getElementById("wppFloat");
   if (wppFloat && PROYECTOS_APP.length) {
@@ -211,6 +223,25 @@ if (grid && PROYECTOS_APP.length) {
     }
   }
 
+  // Calidad constructiva
+  if (calidadWrap && calidadSeccion) {
+    const items = Array.isArray(proyecto.calidadConstructiva)
+      ? proyecto.calidadConstructiva
+      : [];
+    if (items.length) {
+      calidadWrap.innerHTML = "";
+      items.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "calidad-item";
+        div.textContent = t;
+        calidadWrap.appendChild(div);
+      });
+      calidadSeccion.style.display = "";
+    } else {
+      calidadSeccion.style.display = "none";
+    }
+  }
+
   // Botones (al final): Ver planos + WhatsApp
   const acciones = document.getElementById("accionesProyecto");
   if (acciones) {
@@ -330,6 +361,46 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
         ${u.plano ? `<button class="btn-plano">📄 Ver plano</button>` : ""}
       `;
 
+      const info = div.querySelector(".unidad-info");
+      if (info) {
+        const media = document.createElement("div");
+        media.className = "unidad-media";
+
+        const hasFotos = Array.isArray(u.fotos) && u.fotos.length;
+        const btnFotos = document.createElement("button");
+        btnFotos.type = "button";
+        btnFotos.className = "btn-icon" + (hasFotos ? " is-active" : " is-disabled");
+        btnFotos.title = hasFotos ? "Ver fotos de la unidad" : "Sin fotos";
+        btnFotos.setAttribute("aria-disabled", hasFotos ? "false" : "true");
+        btnFotos.textContent = "📷";
+        if (hasFotos) {
+          btnFotos.addEventListener("click", () => openLightboxWith(u.fotos, 0));
+        }
+        media.appendChild(btnFotos);
+
+        const hasPdf = !!u.pdfUrl;
+        if (hasPdf) {
+          const aPdf = document.createElement("a");
+          aPdf.className = "btn-icon is-active";
+          aPdf.href = u.pdfUrl;
+          aPdf.target = "_blank";
+          aPdf.rel = "noopener";
+          aPdf.title = "Descargar ficha PDF";
+          aPdf.textContent = "⬇️";
+          media.appendChild(aPdf);
+        } else {
+          const btnPdf = document.createElement("button");
+          btnPdf.type = "button";
+          btnPdf.className = "btn-icon is-disabled";
+          btnPdf.title = "Sin ficha PDF";
+          btnPdf.setAttribute("aria-disabled", "true");
+          btnPdf.textContent = "⬇️";
+          media.appendChild(btnPdf);
+        }
+
+        info.appendChild(media);
+      }
+
       bloque.appendChild(div);
     });
 
@@ -441,22 +512,33 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   const lightboxClose = document.getElementById("lightboxClose");
   const lightboxPrev = document.getElementById("lightboxPrev");
   const lightboxNext = document.getElementById("lightboxNext");
+  let lightboxPhotos = [];
+  let lightboxIndex = 0;
 
-  img.addEventListener("click", () => {
-    lightboxImg.src = img.src;
+  const openLightboxWith = (list, start = 0) => {
+    if (!Array.isArray(list) || !list.length) return;
+    lightboxPhotos = list;
+    lightboxIndex = (start + list.length) % list.length;
+    lightboxImg.src = lightboxPhotos[lightboxIndex];
     lightbox.classList.add("open");
-  });
+  };
+
+  const moveLightbox = (delta) => {
+    if (!lightboxPhotos.length) return;
+    lightboxIndex = (lightboxIndex + delta + lightboxPhotos.length) % lightboxPhotos.length;
+    lightboxImg.src = lightboxPhotos[lightboxIndex];
+  };
+
+  img.addEventListener("click", () => openLightboxWith(fotos, index));
   lightboxClose?.addEventListener("click", () => lightbox.classList.remove("open"));
   lightbox?.addEventListener("click", e => e.target === lightbox && lightbox.classList.remove("open"));
   lightboxPrev?.addEventListener("click", (e) => {
     e.stopPropagation();
-    show(index - 1);
-    lightboxImg.src = img.src;
+    moveLightbox(-1);
   });
   lightboxNext?.addEventListener("click", (e) => {
     e.stopPropagation();
-    show(index + 1);
-    lightboxImg.src = img.src;
+    moveLightbox(1);
   });
 
   // ==================================================
@@ -515,20 +597,14 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
     }
 
     if (e.key === "ArrowLeft") {
-      if (lightboxOpen) {
-        show(index - 1);
-        lightboxImg.src = img.src;
-      }
+      if (lightboxOpen) moveLightbox(-1);
       if (planosOpen && planos.length) {
         mostrarPlano(planoIndex - 1);
       }
     }
 
     if (e.key === "ArrowRight") {
-      if (lightboxOpen) {
-        show(index + 1);
-        lightboxImg.src = img.src;
-      }
+      if (lightboxOpen) moveLightbox(1);
       if (planosOpen && planos.length) {
         mostrarPlano(planoIndex + 1);
       }
@@ -554,11 +630,10 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
 
     if (tipo === "lightbox") {
       if (dx > 0) {
-        show(index - 1);
+        moveLightbox(-1);
       } else {
-        show(index + 1);
+        moveLightbox(1);
       }
-      lightboxImg.src = img.src;
     } else if (tipo === "planos") {
       if (!planos.length) return;
       if (dx > 0) {

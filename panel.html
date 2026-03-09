@@ -59,6 +59,16 @@
             <textarea id="p_puntos" rows="4" placeholder="A 2 cuadras del mar&#10;Cerca de comercios&#10;Acceso rápido a autopista"></textarea>
           </label>
 
+          <label>
+            Calidad constructiva (uno por línea)
+            <textarea id="p_calidad" rows="4" placeholder="Hormigón armado&#10;Aberturas DVH&#10;Pisos de porcelanato"></textarea>
+          </label>
+
+          <label class="destacado-toggle">
+            <input id="p_destacado" type="checkbox" />
+            Destacado
+          </label>
+
           <div class="form-row">
             <label>
               WhatsApp (ej: 54456276)
@@ -139,7 +149,21 @@
               <option value="reservada">Reservada</option>
               <option value="vendida">Vendida</option>
             </select>
-            <button class="btn" id="btnAgregarUnidad" type="button">Agregar</button>
+          </div>
+
+          <div class="unidad-archivos">
+            <label>
+              Fotos de la unidad
+              <input id="u_fotos" type="file" accept="image/*" multiple />
+            </label>
+            <label>
+              PDF de la unidad
+              <input id="u_pdf" type="file" accept="application/pdf" />
+            </label>
+            <p class="muted small">Estos archivos se asignan a la unidad que agregues a continuación.</p>
+            <div class="unidad-acciones">
+              <button class="btn" id="btnAgregarUnidad" type="button">Agregar</button>
+            </div>
           </div>
 
           <div id="listaUnidadesPanel" class="lista-unidades"></div>
