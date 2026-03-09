@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalle del proyecto</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <header class="topbar" style="display:flex; justify-content:space-between; align-items:center;">
+    <h1 style="margin:0;">Desarrollos Silmare S.A.</h1>
+
+    <a href="index.html" aria-label="Volver al inicio"
+       style="text-decoration:none; color:#111;">
+      ← Volver
+    </a>
+  </header>
+
+  <main class="proyecto-detalle">
+    <section class="hero-proyecto">
+
+      <!-- Galería -->
+      <div class="galeria" style="display:none">
+        <div class="galeria-main">
+          <button class="nav prev" aria-label="Anterior" type="button">‹</button>
+          <img id="galeriaImg" alt="Foto del proyecto" />
+          <button class="nav next" aria-label="Siguiente" type="button">›</button>
+        </div>
+
+        <!-- main.js llena miniaturas reales -->
+        <div class="galeria-thumbs"></div>
+      </div>
+
+      <!-- Info -->
+      <div class="info-proyecto">
+        <h2 id="tituloProyecto">Proyecto</h2>
+        <p class="ubicacion" id="ubicacionProyecto">📍 Ubicación</p>
+        <p class="texto" id="descProyecto">Descripción del proyecto...</p>
+
+        <div class="acciones">
+          <!-- main.js oculta este botón si no hay planos -->
+          <a class="btn" id="btnPlano" href="#">📄 Ver planos</a>
+
+          <a class="btn btn-wpp" id="btnWpp" href="#" target="_blank" rel="noopener">
+            💬 Consultar por WhatsApp
+          </a>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Unidades -->
+    <section class="seccion">
+      <h3>Unidades</h3>
+      <!-- main.js renderiza unidades acá -->
+      <div class="tabla-unidades" id="listaUnidades"></div>
+    </section>
+  </main>
+
+  <!-- Lightbox fotos -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar" type="button">✕</button>
+    <img id="lightboxImg" alt="Imagen ampliada" loading="lazy" />
+  </div>
+
+  <!-- Panel / modal de PLANOS -->
+  <div class="lightbox" id="panelPlanos" aria-hidden="true">
+    <button class="lightbox-close" id="planosClose" aria-label="Cerrar" type="button">✕</button>
+
+    <button class="nav prev" id="planosPrev" aria-label="Anterior" type="button">‹</button>
+    <img id="planosImg" alt="Plano ampliado" loading="lazy" />
+    <button class="nav next" id="planosNext" aria-label="Siguiente" type="button">›</button>
+
+    <div class="galeria-thumbs" id="planosThumbs" style="margin-top:14px;"></div>
+  </div>
+
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>

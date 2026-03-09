@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proyectos Inmobiliarios</title>
+
+  <meta name="description" content="Proyectos inmobiliarios multifamiliares cerca del mar y del centro. Viví e invertí con tranquilidad, diseño y calidad." />
+
+  <meta property="og:title" content="Proyectos Inmobiliarios" />
+  <meta property="og:description" content="Viví cerca del mar, con tranquilidad y diseño. Mirá proyectos disponibles y consultá por WhatsApp." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tudominio.com/" />
+  <meta property="og:image" content="https://tudominio.com/assets/og.jpg" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- Topbar (limpio) -->
+<header class="topbar topbar-clean">
+  <div class="container topbar-inner topbar-inner-clean topbar-row">
+    
+    <!-- Marca (izquierda) -->
+    <a class="topbar-brand" href="index.html">
+      <span class="topbar-brand-name">Silmare</span>
+      <span class="topbar-brand-sub">Desarrollos</span>
+    </a>
+
+    <!-- Nav (derecha) -->
+    <nav class="topnav">
+      <a href="#proyectos">Proyectos</a>
+      <a href="#beneficios">Beneficios</a>
+      <a href="login.html" class="btn btn-outline">Panel</a>
+    </nav>
+
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero2">
+  <div class="container hero2-inner">
+    <div class="hero2-left">
+      <span class="pill">🌿 Naturaleza + 🏙️ Centro</span>
+
+      <h2 class="hero-main-title">Viví cerca del mar, con tranquilidad y diseño.</h2>
+
+      <p>
+        Descubrí proyectos multifamiliares pensados para invertir y vivir mejor:
+        ubicaciones estratégicas, calidad y confort.
+      </p>
+
+      <div class="hero2-cta">
+        <a class="btn btn-primary" href="#proyectos">Ver proyectos</a>
+        <a class="btn btn-ghost" href="#beneficios">¿Por qué elegirnos?</a>
+      </div>
+
+      <div class="hero2-metrics">
+        <div class="metric">
+          <strong>+2</strong><span>Proyectos</span>
+        </div>
+        <div class="metric">
+          <strong>100%</strong><span>Enfoque en calidad</span>
+        </div>
+        <div class="metric">
+          <strong>📍</strong><span>Ubicaciones top</span>
+        </div>
+      </div>
+    </div>
+
+      <div class="hero2-right">
+        <div class="hero-card">
+          <div class="hero-card-img" id="heroSlider">
+            <button class="hero-nav prev" type="button" aria-label="Anterior">‹</button>
+            <img id="heroSliderImg" alt="Imagen destacada" loading="lazy">
+            <button class="hero-nav next" type="button" aria-label="Siguiente">›</button>
+          </div>
+
+          <div class="hero-card-body">
+            <strong>Explorá por proyecto</strong>
+            <span>Fotos, unidades y contacto directo por WhatsApp.</span>
+          </div>
+        </div>
+
+        <div class="hero-glow"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beneficios -->
+  <section id="beneficios" class="features">
+    <div class="container">
+      <h2 class="section-title">Lo que te vas a encontrar</h2>
+      <div class="features-grid">
+        <article class="feature">
+          <h3>Ubicación inteligente</h3>
+          <p>Cerca del mar, del centro y con accesos ágiles.</p>
+        </article>
+        <article class="feature">
+          <h3>Diseño y funcionalidad</h3>
+          <p>Espacios pensados para vivir cómodo y moderno.</p>
+        </article>
+        <article class="feature">
+          <h3>Contacto directo</h3>
+          <p>Consultá por WhatsApp con mensaje prearmado.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proyectos -->
+  <main id="proyectos" class="proyectos2">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Proyectos disponibles</h2>
+          <p class="section-sub">Elegí un proyecto y mirá el detalle completo.</p>
+        </div>
+
+        <div class="search">
+          <input id="buscador" type="search" placeholder="Buscar por nombre o ubicación..." />
+        </div>
+      </div>
+
+      <section id="gridProyectos" class="grid-proyectos2"></section>
+    </div>
+  </main>
+
+<footer class="footer">
+  <div class="container footer-line">
+    <div class="footer-left">
+      SMR · Desarrollos Silmare S.A.
+    </div>
+
+    <div class="footer-right">
+      © <span id="anio"></span> Todos los derechos reservados
+    </div>
+  </div>
+</footer>
+
+<script type="module" src="js/main.js"></script>
+
+  <script>
+    document.getElementById("anio").textContent = new Date().getFullYear();
+    const input = document.getElementById("buscador");
+    input?.addEventListener("input", () => {
+      const q = input.value.toLowerCase().trim();
+      document.querySelectorAll(".card-proyecto").forEach(card => {
+        const txt = card.innerText.toLowerCase();
+        card.style.display = txt.includes(q) ? "" : "none";
+      });
+    });
+  </script>
+</body>
+</html>

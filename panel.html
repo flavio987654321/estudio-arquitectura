@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel - Proyectos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header style="display:flex; justify-content:space-between; align-items:center;">
+    <h1>Panel</h1>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <a class="btn" href="index.html">Ver web</a>
+      <button class="btn" id="btnLogout" type="button">Salir</button>
+    </div>
+  </header>
+
+  <main class="panel-wrap">
+
+    <section class="panel-grid">
+      <aside class="panel-sidebar">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <h2 style="margin:0;">Proyectos</h2>
+          <button class="btn" id="btnNuevo" type="button">+ Nuevo</button>
+        </div>
+
+        <div id="listaProyectos" class="lista-proyectos"></div>
+      </aside>
+
+      <section class="panel-editor">
+        <h2 id="editorTitulo" style="margin-top:0;">Editar proyecto</h2>
+
+        <form id="formProyecto" class="form-proyecto">
+          <input type="hidden" id="p_id" />
+
+          <label>
+            Nombre
+            <input id="p_nombre" type="text" required />
+          </label>
+
+          <label>
+            Ubicación
+            <input id="p_ubicacion" type="text" required />
+          </label>
+
+          <label>
+            Descripción
+            <textarea id="p_descripcion" rows="4" required></textarea>
+          </label>
+
+          <div class="form-row">
+            <label>
+              WhatsApp (ej: 54456276)
+              <input id="p_whatsapp" type="tel" inputmode="numeric" placeholder="5491122334455" />
+            </label>
+
+            <label class="full">
+              Mensaje WhatsApp
+              <textarea id="p_mensajeWpp" rows="3" placeholder="Hola! Quiero info sobre..."></textarea>
+            </label>
+          </div>
+
+          <hr />
+
+          <!-- =========================
+               FOTOS DEL PROYECTO
+          ========================== -->
+          <h3>Fotos</h3>
+          <p class="muted small">Subí fotos reales. Se previsualizan acá y luego se guardan.</p>
+
+          <div class="form-row">
+            <input id="inputFotos" type="file" accept="image/*" multiple />
+            <button class="btn" id="btnLimpiarFotos" type="button">Limpiar nuevas</button>
+          </div>
+
+          <div id="previewFotos" class="grid-fotos"></div>
+
+          <!-- (opcional) mantenemos este div por compatibilidad si tu panel.js lo usa -->
+          <div id="listaFotos" style="display:none;"></div>
+
+          <hr />
+
+          <!-- =========================
+               PLANOS (NUEVO)
+          ========================== -->
+          <h3>Planos</h3>
+          <p class="muted small">
+            Subí imágenes de planos (jpg/png/webp). Se mostrarán al tocar “Ver planos”.
+          </p>
+
+          <div class="form-row">
+            <input id="inputPlanos" type="file" accept="image/*" multiple />
+            <button class="btn" id="btnLimpiarPlanos" type="button">Limpiar nuevos</button>
+          </div>
+
+          <div id="previewPlanos" class="grid-fotos"></div>
+
+          <hr />
+
+          <!-- =========================
+               UNIDADES
+          ========================== -->
+          <h3>Unidades</h3>
+
+          <div class="unidades-form">
+            <input id="u_nombre" type="text" placeholder="Unidad (ej: A)" />
+            <input id="u_amb" type="number" placeholder="Ambientes" />
+           <input id="u_metros" type="number" placeholder="m²" />
+           <input id="u_precio" type="text" placeholder="Precio (ej: USD 95.000)" />
+            <select id="u_piso">
+              <option value="Planta baja">Planta baja</option>
+              <option value="1° piso">1° piso</option>
+              <option value="2° piso">2° piso</option>
+              <option value="3° piso">3° piso</option>
+              <option value="4° piso">4° piso</option>
+              <option value="Cocheras">Cocheras</option>
+              <option value="Terraza">Terraza</option>
+              <option value="Otro">Otro</option>
+            </select>
+            <select id="u_estado">
+              <option value="disponible">Disponible</option>
+              <option value="reservada">Reservada</option>
+              <option value="vendida">Vendida</option>
+            </select>
+            <button class="btn" id="btnAgregarUnidad" type="button">Agregar</button>
+          </div>
+
+          <div id="listaUnidadesPanel" class="lista-unidades"></div>
+
+          <hr />
+
+          <div class="form-actions">
+            <button class="btn" type="submit">Guardar cambios</button>
+            <button class="btn danger" id="btnEliminar" type="button">Eliminar proyecto</button>
+          </div>
+
+          <p id="panelMsg" class="muted"></p>
+        </form>
+
+      </section>
+    </section>
+
+  </main>
+
+<script type="module" src="js/panel.js"></script>
+
+</body>
+</html>

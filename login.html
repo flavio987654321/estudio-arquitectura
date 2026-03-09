@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Panel</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="auth-page">
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">PI</div>
+        <div class="brand-text">
+          <strong>Estudio</strong>
+          <span>de Arquitectura</span>
+        </div>
+      </div>
+
+      <a class="btn btn-ghost" href="index.html">← Volver</a>
+    </div>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card auth-card2">
+      <div class="auth-head">
+        <h1>Ingresar al panel</h1>
+        <p>Acceso exclusivo para administración.</p>
+      </div>
+
+      <form id="loginForm" class="auth-form2">
+        <label class="field">
+          <span>Usuario</span>
+          <input id="usuario" type="email" autocomplete="username" placeholder="admin@silmare.com" required />
+        </label>
+
+        <label class="field">
+          <span>Contraseña</span>
+          <div class="pass-row">
+            <input id="clave" type="password" autocomplete="current-password" placeholder="••••••••" required />
+            <button type="button" class="btn-eye" id="btnVerClave" aria-label="Ver contraseña">👁</button>
+          </div>
+        </label>
+
+        <button class="btn btn-primary btn-block" type="submit" id="btnEntrar">Entrar</button>
+
+        <p id="loginMsg" class="login-msg" aria-live="polite"></p>
+
+        <!-- Demo solo para desarrollo -->
+        <details class="demo">
+          <summary>Demo (solo desarrollo)</summary>
+          <small>usuario <b>admin</b> — contraseña <b>1234</b></small>
+        </details>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="js/auth.js"></script>
+
+  <script>
+    // Mostrar/Ocultar contraseña (no toca auth.js)
+    const btn = document.getElementById("btnVerClave");
+    const pass = document.getElementById("clave");
+    btn?.addEventListener("click", () => {
+      pass.type = pass.type === "password" ? "text" : "password";
+    });
+  </script>
+</body>
+</html>
