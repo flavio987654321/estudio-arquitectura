@@ -60,8 +60,10 @@ function iniciarPanel(user) {
 
   const p_id = document.getElementById("p_id");
   const p_nombre = document.getElementById("p_nombre");
-  const p_ubicacion = document.getElementById("p_ubicacion");
+  const p_direccion = document.getElementById("p_direccion");
   const p_descripcion = document.getElementById("p_descripcion");
+  const p_mapa = document.getElementById("p_mapa");
+  const p_puntos = document.getElementById("p_puntos");
   const p_whatsapp = document.getElementById("p_whatsapp");
   const p_mensajeWpp = document.getElementById("p_mensajeWpp");
 
@@ -289,8 +291,10 @@ function iniciarPanel(user) {
   function limpiarEditor() {
     p_id.value = "";
     p_nombre.value = "";
-    p_ubicacion.value = "";
+    p_direccion.value = "";
     p_descripcion.value = "";
+    p_mapa.value = "";
+    p_puntos.value = "";
     p_whatsapp.value = "";
     p_mensajeWpp.value = "";
 
@@ -314,8 +318,10 @@ function iniciarPanel(user) {
 
     p_id.value = p.id || "";
     p_nombre.value = p.nombre || "";
-    p_ubicacion.value = p.ubicacion || "";
+    p_direccion.value = p.direccion || "";
     p_descripcion.value = p.descripcion || "";
+    p_mapa.value = p.mapaEmbed || "";
+    p_puntos.value = Array.isArray(p.puntosClave) ? p.puntosClave.join("\n") : "";
     p_whatsapp.value = p.whatsapp || "";
     p_mensajeWpp.value = p.mensajeWpp || "";
 
@@ -416,8 +422,13 @@ btnAgregarUnidad.addEventListener("click", () => {
 
     try {
       p.nombre = (p_nombre.value || "").trim();
-      p.ubicacion = (p_ubicacion.value || "").trim();
+      p.direccion = (p_direccion.value || "").trim();
       p.descripcion = (p_descripcion.value || "").trim();
+      p.mapaEmbed = (p_mapa.value || "").trim();
+      p.puntosClave = (p_puntos.value || "")
+        .split("\n")
+        .map(x => x.trim())
+        .filter(Boolean);
       p.whatsapp = (p_whatsapp.value || "").trim();
       p.mensajeWpp = (p_mensajeWpp.value || "").trim();
 

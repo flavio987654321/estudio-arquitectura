@@ -86,6 +86,11 @@ header {
   margin: 0 15px 15px;
   font-size: 0.95rem;
   color: #555;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .card-proyecto button {
@@ -120,8 +125,66 @@ header {
 .hero-proyecto{
   display: grid;
   grid-template-columns: 1.2fr 1fr;
+  grid-template-areas:
+    "text text"
+    "left right";
   gap: 25px;
   align-items: start;
+}
+
+.hero-text{
+  grid-area: text;
+}
+
+.col-izq{
+  grid-area: left;
+}
+
+.col-izq h2{
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.col-izq .texto{
+  margin-bottom: 14px;
+}
+
+/* Descripción del proyecto: 2 líneas + toggle */
+.desc-proyecto{
+  overflow-wrap: anywhere;
+}
+.desc-proyecto.desc-collapsed{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.desc-toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: #0b7a43;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  margin: -6px 0 14px;
+}
+.desc-toggle:hover{
+  text-decoration: underline;
+}
+
+/* Alinear el mapa con la imagen (baja la columna derecha) */
+.info-proyecto{
+  grid-area: right;
+  padding-top: 0;
+}
+
+@media (max-width: 900px){
+  .info-proyecto{
+    padding-top: 0;
+  }
 }
 
 .cover-proyecto{
@@ -147,6 +210,23 @@ header {
   margin-bottom: 18px;
 }
 
+.puntos-clave{
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 16px;
+  padding-left: 18px;
+  color: #444;
+}
+
+.mapa iframe{
+  width: 100%;
+  height: 260px;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  margin-bottom: 10px;
+}
+
 .acciones{
   display: flex;
   gap: 10px;
@@ -165,6 +245,35 @@ header {
 .tabla-unidades{
   display: grid;
   gap: 12px;
+}
+
+.filtros-unidades{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,.04);
+}
+
+.filtros-unidades label{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.filtros-unidades select{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f7f7f7;
+  font-weight: 600;
 }
 
 .unidades-piso{
@@ -318,6 +427,25 @@ header {
   background: rgba(255,255,255,0.25);
 }
 
+.wpp-float{
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10000;
+  background: #0b7a43;
+  color: #fff;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0,0,0,.2);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+
 .lightbox-close{
   position: absolute;
   top: 18px;
@@ -366,7 +494,26 @@ header {
 .chip-text{ font-size:0.9rem; color:#333; }
 .chip-x{ border:none; background:#111; color:#fff; width:24px; height:24px; border-radius:50%; cursor:pointer; }
 
-.unidades-form{ display:grid; grid-template-columns: 1fr 1.2fr 160px 120px; gap:10px; }
+.unidades-form{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr 120px 1.6fr;
+  grid-template-areas:
+    "unidad amb metros precio"
+    "piso estado estado agregar";
+  gap:10px;
+}
+
+#u_nombre{ grid-area: unidad; }
+#u_amb{ grid-area: amb; }
+#u_metros{ grid-area: metros; }
+.precio-input{ grid-area: precio; }
+#u_piso{ grid-area: piso; }
+#u_estado{ grid-area: estado; }
+#btnAgregarUnidad{ grid-area: agregar; }
+
+#btnAgregarUnidad{
+  width: 100%;
+}
 .lista-unidades{ display:grid; gap:10px; }
 .unidad-row{ display:grid; grid-template-columns: 1fr 1.2fr 160px 120px; gap:10px; align-items:center; padding:10px; border:1px solid #eee; border-radius:10px; background:#fafafa; }
 
@@ -658,6 +805,12 @@ header {
 .card-proyecto p{ margin: 0 14px 14px; }
 .card-proyecto .btn{ margin: 0 14px 14px; }
 
+.card-meta{
+  margin: 0 14px 12px;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* Footer */
 .footer{
   border-top: 1px solid var(--border);
@@ -685,6 +838,10 @@ header {
 @media (max-width: 900px){
   .hero-proyecto{
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "text"
+      "left"
+      "right";
   }
 }
 
@@ -1019,12 +1176,16 @@ header {
 
 .precio-input{
   display: grid;
-  grid-template-columns: 90px 1fr;
+  grid-template-columns: 90px minmax(140px, 1fr);
   gap: 8px;
 }
 
 .precio-input select{
   width: 100%;
+}
+
+.precio-input input{
+  min-width: 140px;
 }
 
 .unidad-row strong{
@@ -1067,6 +1228,17 @@ header {
   border: 1px solid var(--border);
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0,0,0,.04);
+}
+
+/* Vendidas: estilo visual */
+.unidad.vendida{
+  opacity: 0.6;
+  filter: grayscale(0.6);
+  background: #fafafa;
+}
+
+.unidad.vendida .unidad-actions{
+  opacity: 0.8;
 }
 
 /* nombre */
@@ -1151,6 +1323,16 @@ header {
 @media (max-width: 640px){
   .galeria-main{
     height: 240px;
+  }
+}
+
+@media (max-width: 640px){
+  .wpp-float{
+    width: 52px;
+    height: 52px;
+    left: auto;
+    right: 14px;
+    bottom: 14px;
   }
 }
 

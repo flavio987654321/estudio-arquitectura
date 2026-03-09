@@ -22,8 +22,17 @@
   <main class="proyecto-detalle">
     <section class="hero-proyecto">
 
-      <!-- Galería -->
-      <div class="galeria" style="display:none">
+      <!-- Fila superior: título + descripción (span 2 columnas) -->
+      <div class="hero-text">
+        <h2 id="tituloProyecto">Proyecto</h2>
+        <p class="texto" id="descProyecto">Descripción del proyecto...</p>
+      </div>
+
+      <!-- Columna izquierda: galería -->
+      <div class="col-izq">
+
+        <!-- Galería -->
+        <div class="galeria" style="display:none">
         <div class="galeria-main">
           <button class="nav prev" aria-label="Anterior" type="button">‹</button>
           <img id="galeriaImg" alt="Foto del proyecto" />
@@ -32,22 +41,12 @@
 
         <!-- main.js llena miniaturas reales -->
         <div class="galeria-thumbs"></div>
+        </div>
       </div>
 
       <!-- Info -->
       <div class="info-proyecto">
-        <h2 id="tituloProyecto">Proyecto</h2>
-        <p class="ubicacion" id="ubicacionProyecto">📍 Ubicación</p>
-        <p class="texto" id="descProyecto">Descripción del proyecto...</p>
-
-        <div class="acciones">
-          <!-- main.js oculta este botón si no hay planos -->
-          <a class="btn" id="btnPlano" href="#">📄 Ver planos</a>
-
-          <a class="btn btn-wpp" id="btnWpp" href="#" target="_blank" rel="noopener">
-            💬 Consultar por WhatsApp
-          </a>
-        </div>
+        <div class="acciones" id="accionesProyecto"></div>
       </div>
 
     </section>
@@ -55,6 +54,7 @@
     <!-- Unidades -->
     <section class="seccion">
       <h3>Unidades</h3>
+      <div class="filtros-unidades" id="filtrosUnidades"></div>
       <!-- main.js renderiza unidades acá -->
       <div class="tabla-unidades" id="listaUnidades"></div>
     </section>
@@ -67,6 +67,10 @@
     <img id="lightboxImg" alt="Imagen ampliada" loading="lazy" />
     <button class="nav next" id="lightboxNext" aria-label="Siguiente" type="button">›</button>
   </div>
+
+  <a class="wpp-float" id="wppFloat" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">
+    💬
+  </a>
 
   <!-- Panel / modal de PLANOS -->
   <div class="lightbox" id="panelPlanos" aria-hidden="true">

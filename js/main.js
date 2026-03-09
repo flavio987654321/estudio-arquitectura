@@ -51,6 +51,15 @@ if (grid && PROYECTOS_APP.length) {
     pDesc.textContent = p.descripcion || "Ver detalles del proyecto.";
     card.appendChild(pDesc);
 
+    const total = Array.isArray(p.unidades) ? p.unidades.length : 0;
+    const disponibles = Array.isArray(p.unidades)
+      ? p.unidades.filter(u => (u.estado || "").toLowerCase() === "disponible").length
+      : 0;
+    const info = document.createElement("div");
+    info.className = "card-meta";
+    info.textContent = `Unidades: ${total} · Disponibles: ${disponibles}`;
+    card.appendChild(info);
+
     const a = document.createElement("a");
     a.className = "btn";
     a.href = `proyecto.html?id=${p.id}`;
@@ -69,6 +78,19 @@ if (grid && PROYECTOS_APP.length) {
   const desc = document.getElementById("descProyecto");
   const listaUnidades = document.getElementById("listaUnidades");
 
+  const wppFloat = document.getElementById("wppFloat");
+  if (wppFloat && PROYECTOS_APP.length) {
+    const p0 = PROYECTOS_APP[0];
+    if (p0?.whatsapp) {
+      const msg = encodeURIComponent(
+        p0.mensajeWpp || `Hola! Quiero info sobre ${p0.nombre}.`
+      );
+      wppFloat.href = `https://wa.me/${p0.whatsapp}?text=${msg}`;
+    } else {
+      wppFloat.style.display = "none";
+    }
+  }
+
   if (!titulo && !ubic && !desc && !listaUnidades) return;
 
   const params = new URLSearchParams(window.location.search);
@@ -80,16 +102,143 @@ if (grid && PROYECTOS_APP.length) {
 
   // Texto
   titulo.textContent = proyecto.nombre || "Proyecto";
-  ubic.textContent = `📍 ${proyecto.ubicacion || ""}`;
+  // Usamos una sola ubicación (dirección o ubicación) y la mostramos solo en la columna derecha
+  const ubicacionFinal = proyecto.direccion || proyecto.ubicacion || "";
+  if (ubic) {
+    ubic.style.display = "none";
+  }
   desc.textContent = proyecto.descripcion || "";
 
-  // WhatsApp
-  const btnWpp = document.getElementById("btnWpp");
-  if (btnWpp && proyecto.whatsapp) {
+  // Descripción: truncar a 1 línea y permitir "Ver más / Ver menos"
+  if (desc) {
+    desc.classList.add("desc-proyecto");
+    const btnToggle = document.createElement("button");
+    btnToggle.type = "button";
+    btnToggle.className = "desc-toggle";
+    btnToggle.textContent = "Ver más";
+    btnToggle.setAttribute("aria-expanded", "false");
+    btnToggle.hidden = true;
+    desc.insertAdjacentElement("afterend", btnToggle);
+
+    const measureDesc = () => {
+      const MAX_LINES = 2;
+      const styles = window.getComputedStyle(desc);
+      let lineHeight = parseFloat(styles.lineHeight);
+      if (Number.isNaN(lineHeight)) {
+        const fontSize = parseFloat(styles.fontSize) || 16;
+        lineHeight = fontSize * 1.2;
+      }
+
+      // Medimos altura real sin clamp
+      desc.classList.remove("desc-collapsed");
+      const fullHeight = desc.getBoundingClientRect().height;
+      const lines = Math.round(fullHeight / lineHeight);
+      const needsToggle = lines > MAX_LINES;
+
+      if (!needsToggle) {
+        btnToggle.hidden = true;
+        desc.classList.remove("desc-collapsed");
+        btnToggle.setAttribute("aria-expanded", "true");
+        btnToggle.dataset.expanded = "true";
+        return;
+      }
+
+      btnToggle.hidden = false;
+      if (btnToggle.dataset.expanded === "true") {
+        desc.classList.remove("desc-collapsed");
+        btnToggle.textContent = "Ver menos";
+        btnToggle.setAttribute("aria-expanded", "true");
+      } else {
+        desc.classList.add("desc-collapsed");
+        btnToggle.textContent = "Ver más";
+        btnToggle.setAttribute("aria-expanded", "false");
+      }
+    };
+
+    btnToggle.addEventListener("click", () => {
+      const isCollapsed = desc.classList.toggle("desc-collapsed");
+      if (isCollapsed) {
+        btnToggle.textContent = "Ver más";
+        btnToggle.setAttribute("aria-expanded", "false");
+        btnToggle.dataset.expanded = "false";
+      } else {
+        btnToggle.textContent = "Ver menos";
+        btnToggle.setAttribute("aria-expanded", "true");
+        btnToggle.dataset.expanded = "true";
+      }
+    });
+
+    requestAnimationFrame(measureDesc);
+    window.addEventListener("resize", measureDesc);
+  }
+
+  // CTA WhatsApp flotante (detalle)
+  if (wppFloat && proyecto.whatsapp) {
     const msg = encodeURIComponent(
       proyecto.mensajeWpp || `Hola! Quiero info sobre ${proyecto.nombre}.`
     );
-    btnWpp.href = `https://wa.me/${proyecto.whatsapp}?text=${msg}`;
+    wppFloat.href = `https://wa.me/${proyecto.whatsapp}?text=${msg}`;
+  } else if (wppFloat) {
+    wppFloat.style.display = "none";
+  }
+
+  // Ubicación: mapa + dirección + puntos clave (en este orden)
+  const infoProyecto = document.querySelector(".info-proyecto");
+  if (infoProyecto) {
+    if (proyecto.mapaEmbed) {
+      const mapa = document.createElement("div");
+      mapa.className = "mapa";
+      mapa.innerHTML = proyecto.mapaEmbed;
+      infoProyecto.appendChild(mapa);
+    }
+
+    if (ubicacionFinal) {
+      const dir = document.createElement("p");
+      dir.className = "texto";
+      dir.textContent = `📍 ${ubicacionFinal}`;
+      infoProyecto.appendChild(dir);
+    }
+
+    if (Array.isArray(proyecto.puntosClave) && proyecto.puntosClave.length) {
+      const lista = document.createElement("ul");
+      lista.className = "puntos-clave";
+      proyecto.puntosClave.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = t;
+        lista.appendChild(li);
+      });
+      infoProyecto.appendChild(lista);
+    }
+  }
+
+  // Botones (al final): Ver planos + WhatsApp
+  const acciones = document.getElementById("accionesProyecto");
+  if (acciones) {
+    acciones.innerHTML = "";
+    if (proyecto.planos && proyecto.planos.length) {
+      const btnPlano = document.createElement("a");
+      btnPlano.className = "btn";
+      btnPlano.id = "btnPlano";
+      btnPlano.href = "#";
+      btnPlano.textContent = "📄 Ver planos";
+      acciones.appendChild(btnPlano);
+    }
+
+    if (proyecto.whatsapp) {
+      const btnWpp = document.createElement("a");
+      btnWpp.className = "btn btn-wpp";
+      btnWpp.id = "btnWpp";
+      const msg = encodeURIComponent(
+        proyecto.mensajeWpp || `Hola! Quiero info sobre ${proyecto.nombre}.`
+      );
+      btnWpp.href = `https://wa.me/${proyecto.whatsapp}?text=${msg}`;
+      btnWpp.target = "_blank";
+      btnWpp.rel = "noopener";
+      btnWpp.textContent = "💬 Consultar por WhatsApp";
+      acciones.appendChild(btnWpp);
+    }
+    // Forzar que los botones queden al final del bloque derecho
+    infoProyecto?.appendChild(acciones);
   }
 
   // Unidades
@@ -141,6 +290,11 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
       const div = document.createElement("div");
       div.className = "unidad";
 
+      const estadoNorm = (u.estado || "disponible").toLowerCase();
+      if (estadoNorm === "vendida") div.classList.add("vendida");
+      div.dataset.piso = piso;
+      div.dataset.estado = estadoNorm;
+
       const moneda = (u.moneda || "USD").toUpperCase();
       const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
       const wpp = proyecto.whatsapp || "";
@@ -154,7 +308,7 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
       ].join(" | ");
       const wppMsg = encodeURIComponent(`${baseMsg} (${extra})`);
       const wppHref = wpp ? `https://wa.me/${wpp}?text=${wppMsg}` : "";
-      const mostrarConsultar = wppHref && (u.estado || "").toLowerCase() !== "vendida";
+      const mostrarConsultar = wppHref && estadoNorm !== "vendida";
 
       div.innerHTML = `
         <div class="unidad-header">
@@ -169,8 +323,8 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
 
         <div class="unidad-actions">
           ${mostrarConsultar ? `<a class="btn btn-consultar" href="${wppHref}" target="_blank" rel="noopener">💬 Consultar</a>` : ""}
-          <span class="estado ${u.estado || "disponible"}">
-            ${u.estado || "disponible"}
+          <span class="estado ${estadoNorm}">
+            ${estadoNorm}
           </span>
         </div>
         ${u.plano ? `<button class="btn-plano">📄 Ver plano</button>` : ""}
@@ -181,6 +335,66 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
 
     listaUnidades.appendChild(bloque);
   });
+
+  // Filtros por piso / estado
+  const filtrosWrap = document.getElementById("filtrosUnidades");
+  if (filtrosWrap) {
+    filtrosWrap.innerHTML = "";
+    const labelPiso = document.createElement("label");
+    labelPiso.textContent = "Piso";
+    const selectPiso = document.createElement("select");
+    selectPiso.id = "filtroPiso";
+    const optTodos = document.createElement("option");
+    optTodos.value = "todos";
+    optTodos.textContent = "Todos";
+    selectPiso.appendChild(optTodos);
+
+    Object.keys(grupos).sort(ordenarPisos).forEach(p => {
+      const opt = document.createElement("option");
+      opt.value = p;
+      opt.textContent = p;
+      selectPiso.appendChild(opt);
+    });
+
+    labelPiso.appendChild(selectPiso);
+
+    const labelEstado = document.createElement("label");
+    labelEstado.textContent = "Estado";
+    const selectEstado = document.createElement("select");
+    selectEstado.id = "filtroEstado";
+    ["todos", "disponible", "reservada", "vendida"].forEach(e => {
+      const opt = document.createElement("option");
+      opt.value = e;
+      opt.textContent = e === "todos" ? "Todos" : e;
+      selectEstado.appendChild(opt);
+    });
+    labelEstado.appendChild(selectEstado);
+
+    filtrosWrap.appendChild(labelPiso);
+    filtrosWrap.appendChild(labelEstado);
+
+    const aplicarFiltros = () => {
+      const pisoVal = selectPiso.value;
+      const estadoVal = selectEstado.value;
+      const bloques = listaUnidades.querySelectorAll(".unidades-piso");
+
+      bloques.forEach(bloque => {
+        let anyVisible = false;
+        const unidades = bloque.querySelectorAll(".unidad");
+        unidades.forEach(u => {
+          const matchPiso = pisoVal === "todos" || u.dataset.piso === pisoVal;
+          const matchEstado = estadoVal === "todos" || u.dataset.estado === estadoVal;
+          const visible = matchPiso && matchEstado;
+          u.style.display = visible ? "" : "none";
+          if (visible) anyVisible = true;
+        });
+        bloque.style.display = anyVisible ? "" : "none";
+      });
+    };
+
+    selectPiso.addEventListener("change", aplicarFiltros);
+    selectEstado.addEventListener("change", aplicarFiltros);
+  }
 }
 
   // ==================================================
