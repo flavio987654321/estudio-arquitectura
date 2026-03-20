@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+﻿import { db } from "./firebase.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -35,6 +35,55 @@ document.addEventListener("DOMContentLoaded", async () => {
   menuDrawer?.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMenu));
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeMenu();
+  });
+
+  // ==================================================
+  // 0.1) Panel Nosotros (index)
+  // ==================================================
+  const btnNosotros = document.getElementById("btnNosotros");
+  const btnNosotrosMobile = document.getElementById("btnNosotrosMobile");
+  const panelNosotros = document.getElementById("nosotrosPanel");
+  const closeNosotros = document.getElementById("closeNosotros");
+  const topbar = document.querySelector(".topbar");
+
+  if (topbar) {
+    const setTopbarH = () => {
+      const h = topbar.getBoundingClientRect().height;
+      document.documentElement.style.setProperty("--topbar-h", `${h}px`);
+    };
+    setTopbarH();
+    window.addEventListener("resize", setTopbarH);
+  }
+
+  const openNosotros = () => {
+    if (!panelNosotros) return;
+    document.body.classList.add("nosotros-open");
+    panelNosotros.setAttribute("aria-hidden", "false");
+    panelNosotros.scrollTop = 0;
+  };
+
+  const closeNosotrosPanel = () => {
+    if (!panelNosotros) return;
+    document.body.classList.remove("nosotros-open");
+    panelNosotros.setAttribute("aria-hidden", "true");
+  };
+
+  btnNosotros?.addEventListener("click", () => {
+    openNosotros();
+  });
+
+  btnNosotrosMobile?.addEventListener("click", () => {
+    closeMenu();
+    openNosotros();
+  });
+
+  closeNosotros?.addEventListener("click", closeNosotrosPanel);
+  panelNosotros?.addEventListener("click", (e) => {
+    if (e.target === panelNosotros) closeNosotrosPanel();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeNosotrosPanel();
   });
 
   // ==================================================
@@ -239,8 +288,8 @@ if (grid && PROYECTOS_APP.length) {
     }
 
     if (ubicacionFinal) {
-      const dir = document.createElement("p");
-      dir.className = "texto";
+    const dir = document.createElement("p");
+    dir.className = "texto";
       dir.textContent = `📍 ${ubicacionFinal}`;
       infoProyecto.appendChild(dir);
     }
@@ -857,3 +906,4 @@ if (heroSlider && heroImg) {
     t = setInterval(() => showHero(hi + 1), 3500);
   });
 }
+

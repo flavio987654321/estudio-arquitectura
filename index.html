@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
@@ -35,7 +35,7 @@
       <nav class="topnav topnav-desktop">
         <a href="#proyectos">Proyectos</a>
         <a href="#beneficios">Beneficios</a>
-        <a href="#nosotros">Nosotros</a>
+        <button class="btn btn-ghost btn-nosotros" id="btnNosotros" type="button">Nosotros</button>
         <a href="#contacto">Contacto</a>
         <a href="login.html">Panel</a>
       </nav>
@@ -58,17 +58,105 @@
       <span class="menu-brand-name">Silmare</span>
       <span class="menu-brand-sub">Desarrollos</span>
     </div>
-    <button class="menu-close" id="menuClose" type="button" aria-label="Cerrar menú">×</button>
+    <button class="menu-close" id="menuClose" type="button" aria-label="Cerrar menú">&times;</button>
   </div>
   <nav class="menu-nav">
     <a href="#proyectos">Proyectos</a>
     <a href="#beneficios">Beneficios</a>
-    <a href="#nosotros">Nosotros</a>
+    <button class="btn btn-ghost btn-nosotros" id="btnNosotrosMobile" type="button">Nosotros</button>
     <a href="#contacto">Contacto</a>
     <a href="login.html">Panel</a>
   </nav>
 </div>
 <div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
+
+<!-- Panel Nosotros -->
+<section class="nosotros-panel" id="nosotrosPanel" aria-hidden="true">
+  <div class="nosotros-hero">
+    <div class="container nosotros-head">
+      <div>
+        <span class="nosotros-kicker">Nosotros</span>
+        <h2 class="nosotros-title">El equipo detrás de cada proyecto</h2>
+        <p class="nosotros-sub">Profesionales comprometidos con la excelencia y tu satisfacción.</p>
+      </div>
+      <button class="btn btn-outline" id="closeNosotros" type="button">Cerrar</button>
+    </div>
+  </div>
+
+  <div class="container nosotros-body">
+    <div class="nosotros-grid">
+      <article class="nosotros-card">
+        <div class="nosotros-img">
+          <img src="assets/hero1.jpg" alt="Equipo Silmare - perfil 1" loading="lazy">
+        </div>
+        <h3>Beltrán Briones</h3>
+        <ul>
+          <li>Cofundador de la desarrolladora inmobiliaria Silmare.</li>
+          <li>Supervisió la construcción y entrega de 12 edificios.</li>
+          <li>Orador en universidades y eventos del sector.</li>
+        </ul>
+      </article>
+
+      <article class="nosotros-card">
+        <div class="nosotros-img">
+          <img src="assets/proyecto01.jpg" alt="Equipo Silmare - perfil 2" loading="lazy">
+        </div>
+        <h3>Iván Briones</h3>
+        <ul>
+          <li>Cofundador de la desarrolladora inmobiliaria Silmare.</li>
+          <li>20 años de experiencia en dirección y gestión.</li>
+          <li>Especialista en finanzas y desarrollo inmobiliario.</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="nosotros-mv">
+      <h3>Misión - Visión</h3>
+      <p><strong>Misión:</strong> Desarrollar edificios de excelentísima calidad, pensados para perdurar, con un nivel de diseño, ejecución y detalle que supere el estándar del mercado y cuide el valor de quienes confían en nosotros.</p>
+      <p><strong>Visión:</strong> Contribuir al cambio cultural y arquitectónico del país, elevando el estándar de la construcción y aportando valor a través de edificaciones que reflejen la identidad y el potencial de la Argentina.</p>
+    </div>
+
+    <section class="nosotros-steps">
+      <div class="nosotros-steps-head">
+        <h3>Lo que hace un desarrollador</h3>
+        <p>Seis etapas que garantizan excelencia de principio a fin.</p>
+      </div>
+
+      <div class="nosotros-steps-grid">
+        <article class="step-card">
+          <div class="step-num">01</div>
+          <h4>Análisis y adquisición</h4>
+          <p>Identificamos ubicaciones estratégicas con alto potencial de valorización. Cada terreno es evaluado exhaustivamente.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-num">02</div>
+          <h4>Diseño arquitectónico</h4>
+          <p>Nuestro equipo de arquitectos crea espacios que combinan funcionalidad, estética y eficiencia energética.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-num">03</div>
+          <h4>Aprobaciones y permisos</h4>
+          <p>Gestionamos todos los trámites municipales y legales para garantizar un desarrollo sin contratiempos.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-num">04</div>
+          <h4>Construcción</h4>
+          <p>Supervisión constante, materiales premium y cumplimiento estricto de plazos. Tu inversión en manos expertas.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-num">05</div>
+          <h4>Comercialización</h4>
+          <p>Estrategias de venta transparentes con opciones de financiación flexibles para inversores y propietarios.</p>
+        </article>
+        <article class="step-card">
+          <div class="step-num">06</div>
+          <h4>Entrega</h4>
+          <p>Inspección final, documentación completa y entrega de llaves. Tu nuevo hogar, listo para vivir.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+</section>
 
 <!-- Hero -->
 <section class="hero2">
@@ -190,3 +278,4 @@
   </script>
 </body>
 </html>
+
