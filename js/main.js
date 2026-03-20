@@ -43,7 +43,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnNosotros = document.getElementById("btnNosotros");
   const btnNosotrosMobile = document.getElementById("btnNosotrosMobile");
   const panelNosotros = document.getElementById("nosotrosPanel");
-  const closeNosotros = document.getElementById("closeNosotros");
   const topbar = document.querySelector(".topbar");
 
   if (topbar) {
@@ -78,7 +77,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     openNosotros();
   });
 
-  closeNosotros?.addEventListener("click", closeNosotrosPanel);
   panelNosotros?.addEventListener("click", (e) => {
     if (e.target === panelNosotros) closeNosotrosPanel();
   });
