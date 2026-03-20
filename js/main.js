@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.classList.add("nosotros-open");
     panelNosotros.setAttribute("aria-hidden", "false");
     panelNosotros.scrollTop = 0;
+    setActiveNav("nosotros");
   };
 
   const closeNosotrosPanel = () => {
@@ -85,6 +86,72 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeNosotrosPanel();
   });
+
+  // Si estoy en Nosotros y navego a otra sección, cerrar panel
+  const navLinks = document.querySelectorAll(
+    '.topnav a[href^="#"], .menu-nav a[href^="#"]'
+  );
+  const sections = [
+    document.getElementById("beneficios"),
+    document.getElementById("proyectos")
+  ].filter(Boolean);
+
+  const setActiveNav = (id) => {
+    document.querySelectorAll(".topnav a, .topnav button").forEach(el => {
+      const isNos = el.id === "btnNosotros" && id === "nosotros";
+      const isHref = el.getAttribute("href") === `#${id}`;
+      el.classList.toggle("nav-active", isNos || isHref);
+    });
+  };
+
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const topbar = document.querySelector(".topbar");
+    const offset = (topbar?.getBoundingClientRect().height || 72) + (id === "proyectos" ? 80 : 24);
+    const y = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: y, behavior: "smooth" });
+  };
+
+  navLinks.forEach(a => {
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      closeNosotrosPanel();
+      const id = a.getAttribute("href")?.replace("#", "");
+      if (!id) return;
+      scrollToSection(id);
+      setActiveNav(id);
+      history.replaceState(null, "", `#${id}`);
+    });
+  });
+
+  // active por scroll
+  window.addEventListener("scroll", () => {
+    const topbar = document.querySelector(".topbar");
+    const offset = (topbar?.getBoundingClientRect().height || 72) + 40;
+    let current = "";
+    sections.forEach(sec => {
+      const top = sec.getBoundingClientRect().top - offset;
+      if (top <= 0) current = sec.id;
+    });
+    if (current) setActiveNav(current);
+  });
+
+  // Reveal on scroll (Nosotros)
+  const revealEls = panelNosotros?.querySelectorAll(
+    ".nosotros-head, .nosotros-card, .nosotros-mv, .nosotros-steps"
+  ) || [];
+  revealEls.forEach(el => el.classList.add("reveal"));
+
+  if (revealEls.length) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        entry.target.classList.toggle("is-visible", entry.isIntersecting);
+      });
+    }, { root: panelNosotros, threshold: 0.2 });
+
+    revealEls.forEach(el => io.observe(el));
+  }
 
   // ==================================================
   // 0) Cargar proyectos desde PANEL (localStorage) o data.js
@@ -232,15 +299,19 @@ if (grid && PROYECTOS_APP.length) {
   const calidadSeccion = document.getElementById("calidadSeccion");
 
   const wppFloat = document.getElementById("wppFloat");
-  if (wppFloat && PROYECTOS_APP.length) {
+  const contactoWpp = document.getElementById("contactoWpp");
+  if ((wppFloat || contactoWpp) && PROYECTOS_APP.length) {
     const p0 = PROYECTOS_APP[0];
     if (p0?.whatsapp) {
       const msg = encodeURIComponent(
         p0.mensajeWpp || `Hola! Quiero info sobre ${p0.nombre}.`
       );
-      wppFloat.href = `https://wa.me/${p0.whatsapp}?text=${msg}`;
+      const href = `https://wa.me/${p0.whatsapp}?text=${msg}`;
+      if (wppFloat) wppFloat.href = href;
+      if (contactoWpp) contactoWpp.href = href;
     } else {
-      wppFloat.style.display = "none";
+      if (wppFloat) wppFloat.style.display = "none";
+      if (contactoWpp) contactoWpp.style.display = "none";
     }
   }
 
