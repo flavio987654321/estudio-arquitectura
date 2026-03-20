@@ -76,8 +76,8 @@
     <div class="container nosotros-head">
       <div>
         <span class="nosotros-kicker">Nosotros</span>
-        <h2 class="nosotros-title">El equipo detrás de cada proyecto</h2>
-        <p class="nosotros-sub">Profesionales comprometidos con la excelencia y tu satisfacción.</p>
+        <h2 class="nosotros-title" id="nosotrosTitle">El equipo detrás de cada proyecto</h2>
+        <p class="nosotros-sub" id="nosotrosSub">Profesionales comprometidos con la excelencia y tu satisfacción.</p>
       </div>
       <button class="btn btn-outline" id="closeNosotros" type="button">Cerrar</button>
     </div>
@@ -87,22 +87,22 @@
     <div class="nosotros-grid">
       <article class="nosotros-card">
         <div class="nosotros-img">
-          <img src="assets/hero1.jpg" alt="Equipo Silmare - perfil 1" loading="lazy">
+          <img id="persona1Img" src="assets/hero1.jpg" alt="Equipo Silmare - perfil 1" loading="lazy">
         </div>
-        <h3>Beltrán Briones</h3>
-        <ul>
+        <h3 id="persona1Name">Beltrán Briones</h3>
+        <ul id="persona1List">
           <li>Cofundador de la desarrolladora inmobiliaria Silmare.</li>
-          <li>Supervisió la construcción y entrega de 12 edificios.</li>
+          <li>Supervisó la construcción y entrega de 12 edificios.</li>
           <li>Orador en universidades y eventos del sector.</li>
         </ul>
       </article>
 
       <article class="nosotros-card">
         <div class="nosotros-img">
-          <img src="assets/proyecto01.jpg" alt="Equipo Silmare - perfil 2" loading="lazy">
+          <img id="persona2Img" src="assets/proyecto01.jpg" alt="Equipo Silmare - perfil 2" loading="lazy">
         </div>
-        <h3>Iván Briones</h3>
-        <ul>
+        <h3 id="persona2Name">Iván Briones</h3>
+        <ul id="persona2List">
           <li>Cofundador de la desarrolladora inmobiliaria Silmare.</li>
           <li>20 años de experiencia en dirección y gestión.</li>
           <li>Especialista en finanzas y desarrollo inmobiliario.</li>
@@ -112,43 +112,43 @@
 
     <div class="nosotros-mv">
       <h3>Misión - Visión</h3>
-      <p><strong>Misión:</strong> Desarrollar edificios de excelentísima calidad, pensados para perdurar, con un nivel de diseño, ejecución y detalle que supere el estándar del mercado y cuide el valor de quienes confían en nosotros.</p>
-      <p><strong>Visión:</strong> Contribuir al cambio cultural y arquitectónico del país, elevando el estándar de la construcción y aportando valor a través de edificaciones que reflejen la identidad y el potencial de la Argentina.</p>
+      <p><strong>Misión:</strong> <span id="misionText">Desarrollar edificios de excelentísima calidad, pensados para perdurar, con un nivel de diseño, ejecución y detalle que supere el estándar del mercado y cuide el valor de quienes confían en nosotros.</span></p>
+      <p><strong>Visión:</strong> <span id="visionText">Contribuir al cambio cultural y arquitectónico del país, elevando el estándar de la construcción y aportando valor a través de edificaciones que reflejen la identidad y el potencial de la Argentina.</span></p>
     </div>
 
     <section class="nosotros-steps">
       <div class="nosotros-steps-head">
-        <h3>Lo que hace un desarrollador</h3>
-        <p>Seis etapas que garantizan excelencia de principio a fin.</p>
+        <h3 id="nosotrosStepsTitle">Lo que hace un desarrollador</h3>
+        <p id="nosotrosStepsSub">Seis etapas que garantizan excelencia de principio a fin.</p>
       </div>
 
       <div class="nosotros-steps-grid">
-        <article class="step-card">
+        <article class="step-card" data-step="0">
           <div class="step-num">01</div>
           <h4>Análisis y adquisición</h4>
           <p>Identificamos ubicaciones estratégicas con alto potencial de valorización. Cada terreno es evaluado exhaustivamente.</p>
         </article>
-        <article class="step-card">
+        <article class="step-card" data-step="1">
           <div class="step-num">02</div>
           <h4>Diseño arquitectónico</h4>
           <p>Nuestro equipo de arquitectos crea espacios que combinan funcionalidad, estética y eficiencia energética.</p>
         </article>
-        <article class="step-card">
+        <article class="step-card" data-step="2">
           <div class="step-num">03</div>
           <h4>Aprobaciones y permisos</h4>
           <p>Gestionamos todos los trámites municipales y legales para garantizar un desarrollo sin contratiempos.</p>
         </article>
-        <article class="step-card">
+        <article class="step-card" data-step="3">
           <div class="step-num">04</div>
           <h4>Construcción</h4>
           <p>Supervisión constante, materiales premium y cumplimiento estricto de plazos. Tu inversión en manos expertas.</p>
         </article>
-        <article class="step-card">
+        <article class="step-card" data-step="4">
           <div class="step-num">05</div>
           <h4>Comercialización</h4>
           <p>Estrategias de venta transparentes con opciones de financiación flexibles para inversores y propietarios.</p>
         </article>
-        <article class="step-card">
+        <article class="step-card" data-step="5">
           <div class="step-num">06</div>
           <h4>Entrega</h4>
           <p>Inspección final, documentación completa y entrega de llaves. Tu nuevo hogar, listo para vivir.</p>

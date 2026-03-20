@@ -616,6 +616,19 @@ header {
   margin-top: 0;
   font-size: 1.25rem;
 }
+.panel-editor-head{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.panel-editor-tabs{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
 .panel-editor-hint{
   margin: 6px 0 12px;
 }

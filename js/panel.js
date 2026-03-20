@@ -1,8 +1,9 @@
-import { db, auth } from "./firebase.js";
+﻿import { db, auth } from "./firebase.js";
 import {
   collection,
   doc,
   getDocs,
+  getDoc,
   setDoc,
   deleteDoc,
   serverTimestamp
@@ -64,7 +65,11 @@ function iniciarPanel(user) {
   const btnNuevo = document.getElementById("btnNuevo");
   const listaProyectos = document.getElementById("listaProyectos");
   const editor = document.querySelector(".panel-editor");
+  const editorTitulo = document.getElementById("editorTitulo");
   const editorHint = document.getElementById("editorHint");
+  const tabProyecto = document.getElementById("tabProyecto");
+  const tabNosotros = document.getElementById("tabNosotros");
+  const formNosotros = document.getElementById("formNosotros");
 
   const form = document.getElementById("formProyecto");
   const msg = document.getElementById("panelMsg");
@@ -79,6 +84,36 @@ function iniciarPanel(user) {
   const p_destacado = document.getElementById("p_destacado");
   const p_whatsapp = document.getElementById("p_whatsapp");
   const p_mensajeWpp = document.getElementById("p_mensajeWpp");
+
+  // ===== NOSOTROS (GLOBAL) =====
+  const n_titulo = document.getElementById("n_titulo");
+  const n_subtitulo = document.getElementById("n_subtitulo");
+  const n_p1_nombre = document.getElementById("n_p1_nombre");
+  const n_p1_items = document.getElementById("n_p1_items");
+  const n_p1_foto = document.getElementById("n_p1_foto");
+  const n_p1_preview = document.getElementById("n_p1_preview");
+  const n_p2_nombre = document.getElementById("n_p2_nombre");
+  const n_p2_items = document.getElementById("n_p2_items");
+  const n_p2_foto = document.getElementById("n_p2_foto");
+  const n_p2_preview = document.getElementById("n_p2_preview");
+  const n_mision = document.getElementById("n_mision");
+  const n_vision = document.getElementById("n_vision");
+  const n_steps_title = document.getElementById("n_steps_title");
+  const n_steps_sub = document.getElementById("n_steps_sub");
+  const n_s1_title = document.getElementById("n_s1_title");
+  const n_s1_text = document.getElementById("n_s1_text");
+  const n_s2_title = document.getElementById("n_s2_title");
+  const n_s2_text = document.getElementById("n_s2_text");
+  const n_s3_title = document.getElementById("n_s3_title");
+  const n_s3_text = document.getElementById("n_s3_text");
+  const n_s4_title = document.getElementById("n_s4_title");
+  const n_s4_text = document.getElementById("n_s4_text");
+  const n_s5_title = document.getElementById("n_s5_title");
+  const n_s5_text = document.getElementById("n_s5_text");
+  const n_s6_title = document.getElementById("n_s6_title");
+  const n_s6_text = document.getElementById("n_s6_text");
+  const btnGuardarNosotros = document.getElementById("btnGuardarNosotros");
+  const panelMsgNosotros = document.getElementById("panelMsgNosotros");
 
   // ===== FOTOS =====
   const inputFotos = document.getElementById("inputFotos");
@@ -116,10 +151,23 @@ function iniciarPanel(user) {
   let unidadFotosNuevas = [];
   let unidadPdfNuevo = null;
 
+  // Nosotros (global)
+  let nosotrosData = null;
+  let n_p1_foto_nueva = null;
+  let n_p2_foto_nueva = null;
+  let n_p1_foto_url = "";
+  let n_p2_foto_url = "";
+
   function setMsg(text) {
     if (!msg) return;
     msg.textContent = text || "";
     if (text) setTimeout(() => (msg.textContent = ""), 2200);
+  }
+
+  function setMsgNosotros(text) {
+    if (!panelMsgNosotros) return;
+    panelMsgNosotros.textContent = text || "";
+    if (text) setTimeout(() => (panelMsgNosotros.textContent = ""), 2200);
   }
 
   function setEditorEnabled(enabled) {
@@ -130,6 +178,26 @@ function iniciarPanel(user) {
         ? "Editando proyecto."
         : "Seleccioná un proyecto o creá uno nuevo para editar.";
     }
+  }
+
+  function showProyectoEditor() {
+    if (form) form.classList.remove("is-hidden");
+    if (formNosotros) formNosotros.classList.add("is-hidden");
+    tabProyecto?.classList.remove("btn-ghost");
+    tabNosotros?.classList.add("btn-ghost");
+    if (editorTitulo) editorTitulo.textContent = "Proyecto";
+    const hasActivo = !!getActivo();
+    setEditorEnabled(hasActivo);
+  }
+
+  function showNosotrosEditor() {
+    if (form) form.classList.add("is-hidden");
+    if (formNosotros) formNosotros.classList.remove("is-hidden");
+    tabProyecto?.classList.add("btn-ghost");
+    tabNosotros?.classList.remove("btn-ghost");
+    editor?.classList.remove("is-disabled");
+    if (editorTitulo) editorTitulo.textContent = "Nosotros";
+    if (editorHint) editorHint.textContent = "Editando contenido general de Nosotros.";
   }
 
   function renderLista() {
@@ -146,6 +214,7 @@ function iniciarPanel(user) {
         activoId = p.id;
         renderLista();
         cargarEnEditor();
+        showProyectoEditor();
       });
       listaProyectos.appendChild(item);
     });
@@ -360,6 +429,73 @@ function renderFotosPreview() {
       previewPlanos.appendChild(div);
     });
   }
+
+  function renderNosotrosPreview() {
+    if (n_p1_preview) n_p1_preview.innerHTML = "";
+    if (n_p2_preview) n_p2_preview.innerHTML = "";
+
+    const renderOne = (wrap, url, isNueva) => {
+      if (!wrap || !url) return;
+      const div = document.createElement("div");
+      div.className = "foto-item";
+      div.innerHTML = `
+        <img src="${url}" alt="foto">
+        <div class="tag">${isNueva ? "Nueva" : "Guardada"}</div>
+      `;
+      wrap.appendChild(div);
+    };
+
+    if (n_p1_preview) {
+      const url = n_p1_foto_nueva ? URL.createObjectURL(n_p1_foto_nueva) : n_p1_foto_url;
+      renderOne(n_p1_preview, url, !!n_p1_foto_nueva);
+    }
+    if (n_p2_preview) {
+      const url = n_p2_foto_nueva ? URL.createObjectURL(n_p2_foto_nueva) : n_p2_foto_url;
+      renderOne(n_p2_preview, url, !!n_p2_foto_nueva);
+    }
+  }
+
+  async function cargarNosotrosEnEditor() {
+    try {
+      const snap = await getDoc(doc(db, "site", "nosotros"));
+      nosotrosData = snap.exists() ? (snap.data() || {}) : {};
+
+      n_titulo.value = nosotrosData.titulo || "El equipo detrás de cada proyecto";
+      n_subtitulo.value = nosotrosData.subtitulo || "Profesionales comprometidos con la excelencia y tu satisfacción.";
+
+      n_p1_nombre.value = nosotrosData.personas?.[0]?.nombre || "";
+      n_p1_items.value = (nosotrosData.personas?.[0]?.items || []).join("\n");
+      n_p1_foto_url = nosotrosData.personas?.[0]?.fotoUrl || "";
+
+      n_p2_nombre.value = nosotrosData.personas?.[1]?.nombre || "";
+      n_p2_items.value = (nosotrosData.personas?.[1]?.items || []).join("\n");
+      n_p2_foto_url = nosotrosData.personas?.[1]?.fotoUrl || "";
+
+      n_mision.value = nosotrosData.mision || "";
+      n_vision.value = nosotrosData.vision || "";
+
+      n_steps_title.value = nosotrosData.stepsTitle || "Lo que hace un desarrollador";
+      n_steps_sub.value = nosotrosData.stepsSub || "Seis etapas que garantizan excelencia de principio a fin.";
+
+      const steps = nosotrosData.steps || [];
+      n_s1_title.value = steps[0]?.titulo || "";
+      n_s1_text.value = steps[0]?.texto || "";
+      n_s2_title.value = steps[1]?.titulo || "";
+      n_s2_text.value = steps[1]?.texto || "";
+      n_s3_title.value = steps[2]?.titulo || "";
+      n_s3_text.value = steps[2]?.texto || "";
+      n_s4_title.value = steps[3]?.titulo || "";
+      n_s4_text.value = steps[3]?.texto || "";
+      n_s5_title.value = steps[4]?.titulo || "";
+      n_s5_text.value = steps[4]?.texto || "";
+      n_s6_title.value = steps[5]?.titulo || "";
+      n_s6_text.value = steps[5]?.texto || "";
+
+      renderNosotrosPreview();
+    } catch (err) {
+      console.error("Error cargando Nosotros:", err);
+    }
+  }
   inputFotos?.addEventListener("change", () => {
     const files = Array.from(inputFotos.files || []);
     if (!files.length) return;
@@ -405,6 +541,25 @@ function renderFotosPreview() {
   btnLimpiarPlanos?.addEventListener("click", () => {
     planosNuevos = [];
     renderPlanosPreview();
+  });
+
+  n_p1_foto?.addEventListener("change", () => {
+    n_p1_foto_nueva = n_p1_foto.files?.[0] || null;
+    renderNosotrosPreview();
+  });
+
+  n_p2_foto?.addEventListener("change", () => {
+    n_p2_foto_nueva = n_p2_foto.files?.[0] || null;
+    renderNosotrosPreview();
+  });
+
+  tabProyecto?.addEventListener("click", () => {
+    showProyectoEditor();
+  });
+
+  tabNosotros?.addEventListener("click", async () => {
+    showNosotrosEditor();
+    await cargarNosotrosEnEditor();
   });
 
   u_fotos?.addEventListener("change", () => {
@@ -506,6 +661,7 @@ function renderFotosPreview() {
     renderLista();
     cargarEnEditor();
     setMsg("Proyecto creado.");
+    showProyectoEditor();
   });
 
 // Agregar unidad
@@ -561,6 +717,70 @@ btnAgregarUnidad?.addEventListener("click", () => {
   renderUnidades(p);
   setMsg("Unidad agregada. Recordá guardar cambios.");
 }); 
+
+  // Guardar Nosotros (general)
+  formNosotros?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!btnGuardarNosotros) return;
+
+    const oldTxt = btnGuardarNosotros.textContent;
+    btnGuardarNosotros.disabled = true;
+    btnGuardarNosotros.textContent = "Guardando...";
+
+    try {
+      const basePath = "site/nosotros";
+
+      if (n_p1_foto_nueva) {
+        const safeName = `${Date.now()}-p1-${n_p1_foto_nueva.name}`.replace(/\s+/g, "-");
+        n_p1_foto_url = await subirArchivoAStorage(n_p1_foto_nueva, `${basePath}/${safeName}`);
+        n_p1_foto_nueva = null;
+      }
+      if (n_p2_foto_nueva) {
+        const safeName = `${Date.now()}-p2-${n_p2_foto_nueva.name}`.replace(/\s+/g, "-");
+        n_p2_foto_url = await subirArchivoAStorage(n_p2_foto_nueva, `${basePath}/${safeName}`);
+        n_p2_foto_nueva = null;
+      }
+
+      const data = {
+        titulo: (n_titulo.value || "").trim(),
+        subtitulo: (n_subtitulo.value || "").trim(),
+        mision: (n_mision.value || "").trim(),
+        vision: (n_vision.value || "").trim(),
+        stepsTitle: (n_steps_title.value || "").trim(),
+        stepsSub: (n_steps_sub.value || "").trim(),
+        personas: [
+          {
+            nombre: (n_p1_nombre.value || "").trim(),
+            items: (n_p1_items.value || "").split("\n").map(x => x.trim()).filter(Boolean),
+            fotoUrl: n_p1_foto_url || ""
+          },
+          {
+            nombre: (n_p2_nombre.value || "").trim(),
+            items: (n_p2_items.value || "").split("\n").map(x => x.trim()).filter(Boolean),
+            fotoUrl: n_p2_foto_url || ""
+          }
+        ],
+        steps: [
+          { titulo: (n_s1_title.value || "").trim(), texto: (n_s1_text.value || "").trim() },
+          { titulo: (n_s2_title.value || "").trim(), texto: (n_s2_text.value || "").trim() },
+          { titulo: (n_s3_title.value || "").trim(), texto: (n_s3_text.value || "").trim() },
+          { titulo: (n_s4_title.value || "").trim(), texto: (n_s4_text.value || "").trim() },
+          { titulo: (n_s5_title.value || "").trim(), texto: (n_s5_text.value || "").trim() },
+          { titulo: (n_s6_title.value || "").trim(), texto: (n_s6_text.value || "").trim() }
+        ]
+      };
+
+      await setDoc(doc(db, "site", "nosotros"), data, { merge: true });
+      setMsgNosotros("Guardado ✅");
+      renderNosotrosPreview();
+    } catch (err) {
+      console.error(err);
+      alert("Error guardando Nosotros.");
+    } finally {
+      btnGuardarNosotros.disabled = false;
+      btnGuardarNosotros.textContent = oldTxt || "Guardar Nosotros";
+    }
+  });
 
   // Guardar cambios del proyecto
   form.addEventListener("submit", async (e) => {
@@ -739,8 +959,12 @@ deleteDoc(doc(db, "proyectos", p.id))
     activoId = proyectos[0]?.id || null;
     renderLista();
     cargarEnEditor();
+    await cargarNosotrosEnEditor();
+    showProyectoEditor();
   })();
   }
 });
+
+
 
 

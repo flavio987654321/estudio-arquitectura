@@ -19,5 +19,13 @@ service firebase.storage {
           || request.resource.contentType == 'application/pdf'
         );
     }
+
+    // site/nosotros/...
+    match /site/nosotros/{allPaths=**} {
+      allow read: if true;
+      allow write: if signedIn()
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
   }
 }

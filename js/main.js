@@ -1,5 +1,5 @@
 ﻿import { db } from "./firebase.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { collection, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -100,6 +100,64 @@ async function cargarProyectosDesdeFirestore() {
 }
 
 await cargarProyectosDesdeFirestore();
+
+  // ==================================================
+  // 0.2) Cargar contenido Nosotros (general)
+  // ==================================================
+  async function cargarNosotrosDesdeFirestore() {
+    try {
+      const snap = await getDoc(doc(db, "site", "nosotros"));
+      if (!snap.exists()) return;
+      const data = snap.data() || {};
+
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && value) el.textContent = value;
+      };
+
+      setText("nosotrosTitle", data.titulo);
+      setText("nosotrosSub", data.subtitulo);
+      setText("persona1Name", data.personas?.[0]?.nombre);
+      setText("persona2Name", data.personas?.[1]?.nombre);
+      setText("misionText", data.mision);
+      setText("visionText", data.vision);
+      setText("nosotrosStepsTitle", data.stepsTitle);
+      setText("nosotrosStepsSub", data.stepsSub);
+
+      const p1Img = document.getElementById("persona1Img");
+      const p2Img = document.getElementById("persona2Img");
+      if (p1Img && data.personas?.[0]?.fotoUrl) p1Img.src = data.personas[0].fotoUrl;
+      if (p2Img && data.personas?.[1]?.fotoUrl) p2Img.src = data.personas[1].fotoUrl;
+
+      const renderList = (id, items) => {
+        const ul = document.getElementById(id);
+        if (!ul || !Array.isArray(items) || !items.length) return;
+        ul.innerHTML = "";
+        items.forEach(t => {
+          const li = document.createElement("li");
+          li.textContent = t;
+          ul.appendChild(li);
+        });
+      };
+
+      renderList("persona1List", data.personas?.[0]?.items || []);
+      renderList("persona2List", data.personas?.[1]?.items || []);
+
+      const stepCards = document.querySelectorAll(".step-card[data-step]");
+      if (Array.isArray(data.steps)) {
+        stepCards.forEach((card, i) => {
+          const h4 = card.querySelector("h4");
+          const p = card.querySelector("p");
+          if (h4 && data.steps[i]?.titulo) h4.textContent = data.steps[i].titulo;
+          if (p && data.steps[i]?.texto) p.textContent = data.steps[i].texto;
+        });
+      }
+    } catch (err) {
+      console.error("Error cargando Nosotros:", err);
+    }
+  }
+
+  await cargarNosotrosDesdeFirestore();
 
   // ==================================================
   // 1) INDEX.HTML -> Render listado
@@ -906,4 +964,5 @@ if (heroSlider && heroImg) {
     t = setInterval(() => showHero(hi + 1), 3500);
   });
 }
+
 

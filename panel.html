@@ -31,7 +31,13 @@
       </aside>
 
       <section class="panel-editor">
-        <h2 id="editorTitulo" class="panel-editor-title">Editar proyecto</h2>
+        <div class="panel-editor-head">
+          <h2 id="editorTitulo" class="panel-editor-title">Proyecto</h2>
+          <div class="panel-editor-tabs">
+            <button class="btn mini" id="tabProyecto" type="button">Editar proyecto</button>
+            <button class="btn mini btn-ghost" id="tabNosotros" type="button">Editar nosotros</button>
+          </div>
+        </div>
         <p id="editorHint" class="muted panel-editor-hint">Seleccioná un proyecto o creá uno nuevo para editar.</p>
 
         <form id="formProyecto" class="form-proyecto">
@@ -222,6 +228,161 @@
           </div>
 
           <p id="panelMsg" class="muted"></p>
+        </form>
+
+        <form id="formNosotros" class="form-proyecto is-hidden">
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Encabezado</h3>
+              <p class="muted small">Título y subtítulo del panel Nosotros.</p>
+            </div>
+
+            <label>
+              Título
+              <input id="n_titulo" type="text" />
+            </label>
+            <label>
+              Subtítulo
+              <input id="n_subtitulo" type="text" />
+            </label>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Persona 1</h3>
+              <p class="muted small">Nombre, puntos y foto.</p>
+            </div>
+
+            <label>
+              Nombre
+              <input id="n_p1_nombre" type="text" />
+            </label>
+            <label>
+              Puntos (uno por línea)
+              <textarea id="n_p1_items" rows="4"></textarea>
+            </label>
+            <label>
+              Foto
+              <input id="n_p1_foto" type="file" accept="image/*" />
+            </label>
+            <div class="grid-fotos" id="n_p1_preview"></div>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Persona 2</h3>
+              <p class="muted small">Nombre, puntos y foto.</p>
+            </div>
+
+            <label>
+              Nombre
+              <input id="n_p2_nombre" type="text" />
+            </label>
+            <label>
+              Puntos (uno por línea)
+              <textarea id="n_p2_items" rows="4"></textarea>
+            </label>
+            <label>
+              Foto
+              <input id="n_p2_foto" type="file" accept="image/*" />
+            </label>
+            <div class="grid-fotos" id="n_p2_preview"></div>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Misión - Visión</h3>
+            </div>
+            <label>
+              Misión
+              <textarea id="n_mision" rows="3"></textarea>
+            </label>
+            <label>
+              Visión
+              <textarea id="n_vision" rows="3"></textarea>
+            </label>
+          </div>
+
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>6 pasos</h3>
+              <p class="muted small">Título general, subtítulo y los seis pasos.</p>
+            </div>
+            <label>
+              Título
+              <input id="n_steps_title" type="text" />
+            </label>
+            <label>
+              Subtítulo
+              <input id="n_steps_sub" type="text" />
+            </label>
+
+            <div class="form-row">
+              <label>
+                Paso 1 título
+                <input id="n_s1_title" type="text" />
+              </label>
+              <label>
+                Paso 1 texto
+                <input id="n_s1_text" type="text" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Paso 2 título
+                <input id="n_s2_title" type="text" />
+              </label>
+              <label>
+                Paso 2 texto
+                <input id="n_s2_text" type="text" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Paso 3 título
+                <input id="n_s3_title" type="text" />
+              </label>
+              <label>
+                Paso 3 texto
+                <input id="n_s3_text" type="text" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Paso 4 título
+                <input id="n_s4_title" type="text" />
+              </label>
+              <label>
+                Paso 4 texto
+                <input id="n_s4_text" type="text" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Paso 5 título
+                <input id="n_s5_title" type="text" />
+              </label>
+              <label>
+                Paso 5 texto
+                <input id="n_s5_text" type="text" />
+              </label>
+            </div>
+            <div class="form-row">
+              <label>
+                Paso 6 título
+                <input id="n_s6_title" type="text" />
+              </label>
+              <label>
+                Paso 6 texto
+                <input id="n_s6_text" type="text" />
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn" id="btnGuardarNosotros" type="submit">Guardar Nosotros</button>
+          </div>
+          <p id="panelMsgNosotros" class="muted"></p>
         </form>
 
       </section>
