@@ -4,6 +4,40 @@ import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/
 document.addEventListener("DOMContentLoaded", async () => {
 
   // ==================================================
+  // 0) Menú hamburguesa (index)
+  // ==================================================
+  const menuToggle = document.getElementById("menuToggle");
+  const menuDrawer = document.getElementById("menuDrawer");
+  const menuBackdrop = document.getElementById("menuBackdrop");
+  const menuClose = document.getElementById("menuClose");
+
+  const openMenu = () => {
+    if (!menuToggle || !menuDrawer || !menuBackdrop) return;
+    document.body.classList.add("menu-open");
+    menuToggle.setAttribute("aria-expanded", "true");
+    menuDrawer.setAttribute("aria-hidden", "false");
+    menuBackdrop.setAttribute("aria-hidden", "false");
+  };
+
+  const closeMenu = () => {
+    if (!menuToggle || !menuDrawer || !menuBackdrop) return;
+    document.body.classList.remove("menu-open");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuDrawer.setAttribute("aria-hidden", "true");
+    menuBackdrop.setAttribute("aria-hidden", "true");
+  };
+
+  menuToggle?.addEventListener("click", () => {
+    document.body.classList.contains("menu-open") ? closeMenu() : openMenu();
+  });
+  menuBackdrop?.addEventListener("click", closeMenu);
+  menuClose?.addEventListener("click", closeMenu);
+  menuDrawer?.querySelectorAll("a").forEach(a => a.addEventListener("click", closeMenu));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+
+  // ==================================================
   // 0) Cargar proyectos desde PANEL (localStorage) o data.js
   // ==================================================
 let PROYECTOS_APP = [];
@@ -242,7 +276,7 @@ if (grid && PROYECTOS_APP.length) {
     }
   }
 
-  // Botones (al final): Ver planos + WhatsApp
+  // Botones (al final): Ver planos + Avances + WhatsApp
   const acciones = document.getElementById("accionesProyecto");
   if (acciones) {
     acciones.innerHTML = "";
@@ -251,8 +285,17 @@ if (grid && PROYECTOS_APP.length) {
       btnPlano.className = "btn";
       btnPlano.id = "btnPlano";
       btnPlano.href = "#";
-      btnPlano.textContent = "📄 Ver planos";
+      btnPlano.textContent = "📄 Planos";
       acciones.appendChild(btnPlano);
+    }
+
+    if (Array.isArray(proyecto.avances) && proyecto.avances.length) {
+      const btnAvances = document.createElement("a");
+      btnAvances.className = "btn";
+      btnAvances.id = "btnAvances";
+      btnAvances.href = "#";
+      btnAvances.textContent = "Avances";
+      acciones.appendChild(btnAvances);
     }
 
     if (proyecto.whatsapp) {
@@ -265,7 +308,7 @@ if (grid && PROYECTOS_APP.length) {
       btnWpp.href = `https://wa.me/${proyecto.whatsapp}?text=${msg}`;
       btnWpp.target = "_blank";
       btnWpp.rel = "noopener";
-      btnWpp.textContent = "💬 Consultar por WhatsApp";
+      btnWpp.textContent = "💬 WhatsApp";
       acciones.appendChild(btnWpp);
     }
     // Forzar que los botones queden al final del bloque derecho
@@ -313,9 +356,14 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   };
 
   Object.keys(grupos).sort(ordenarPisos).forEach(piso => {
-    const bloque = document.createElement("div");
-    bloque.className = "unidades-piso";
-    bloque.innerHTML = `<h4 class="piso-title">${piso}</h4>`;
+    const bloque = document.createElement("details");
+    bloque.className = "unidades-piso piso-accordion";
+    bloque.innerHTML = `
+      <summary class="piso-title">
+        <span>${piso}</span>
+        <span class="piso-count">${grupos[piso].length}</span>
+      </summary>
+    `;
 
     grupos[piso].forEach(u => {
       const div = document.createElement("div");
@@ -460,6 +508,17 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
           if (visible) anyVisible = true;
         });
         bloque.style.display = anyVisible ? "" : "none";
+        if (!anyVisible) return;
+
+        if (pisoVal !== "todos") {
+          bloque.open = true;
+        } else if (estadoVal !== "todos") {
+          // si filtra por estado, abrimos solo los que tienen resultados
+          bloque.open = true;
+        } else {
+          // sin filtros: mantener cerrados por defecto
+          bloque.open = false;
+        }
       });
     };
 
@@ -615,14 +674,94 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   planosPrev?.addEventListener("click", () => mostrarPlano(planoIndex - 1));
   planosNext?.addEventListener("click", () => mostrarPlano(planoIndex + 1));
 
+  // ==================================================
+  // 5) AVANCES (modal)
+  // ==================================================
+  const btnAvances = document.getElementById("btnAvances");
+  const panelAvances = document.getElementById("panelAvances");
+  const avancesImg = document.getElementById("avancesImg");
+  const avancesVideo = document.getElementById("avancesVideo");
+  const avancesThumbs = document.getElementById("avancesThumbs");
+  const avancesClose = document.getElementById("avancesClose");
+
+  const isVideoUrl = (url) => /\.(mp4|webm)($|\?)/i.test(url || "");
+  const avances = Array.isArray(proyecto.avances) ? proyecto.avances.slice() : [];
+  avances.sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+  let avanceIndex = 0;
+
+  if (!avances.length && btnAvances) {
+    btnAvances.style.display = "none";
+  }
+
+  function showAvance(i) {
+    if (!avances.length) return;
+    avanceIndex = (i + avances.length) % avances.length;
+    const a = avances[avanceIndex];
+    const isVideo = a.tipo === "video" || isVideoUrl(a.mediaUrl);
+
+    if (avancesVideo) {
+      avancesVideo.pause();
+      avancesVideo.currentTime = 0;
+    }
+
+    if (isVideo) {
+      if (avancesVideo) {
+        avancesVideo.src = a.mediaUrl || "";
+        avancesVideo.style.display = "block";
+      }
+      if (avancesImg) avancesImg.style.display = "none";
+    } else {
+      if (avancesImg) {
+        avancesImg.src = a.mediaUrl || "";
+        avancesImg.style.display = "block";
+      }
+      if (avancesVideo) avancesVideo.style.display = "none";
+    }
+
+    [...(avancesThumbs?.children || [])].forEach(t => t.classList.remove("active"));
+    avancesThumbs?.children[avanceIndex]?.classList.add("active");
+  }
+
+  function closeAvances() {
+    panelAvances?.classList.remove("open");
+    if (avancesVideo) {
+      avancesVideo.pause();
+      avancesVideo.currentTime = 0;
+    }
+  }
+
+  btnAvances?.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!avancesThumbs) return;
+    avancesThumbs.innerHTML = "";
+
+    avances.forEach((a, i) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "avance-chip" + (i === 0 ? " active" : "");
+      const tipo = (a.tipo === "video" || isVideoUrl(a.mediaUrl)) ? "Video" : "Foto";
+      chip.textContent = `${a.fecha || "Sin fecha"} ? ${tipo}`;
+      chip.addEventListener("click", () => showAvance(i));
+      avancesThumbs.appendChild(chip);
+    });
+
+    showAvance(0);
+    panelAvances?.classList.add("open");
+  });
+
+  avancesClose?.addEventListener("click", closeAvances);
+  panelAvances?.addEventListener("click", e => e.target === panelAvances && closeAvances());
+
   document.addEventListener("keydown", (e) => {
     const lightboxOpen = lightbox?.classList.contains("open");
     const planosOpen = panelPlanos?.classList.contains("open");
-    if (!lightboxOpen && !planosOpen) return;
+    const avancesOpen = panelAvances?.classList.contains("open");
+    if (!lightboxOpen && !planosOpen && !avancesOpen) return;
 
     if (e.key === "Escape") {
       if (lightboxOpen) lightbox.classList.remove("open");
       if (planosOpen) panelPlanos.classList.remove("open");
+      if (avancesOpen) closeAvances();
       return;
     }
 

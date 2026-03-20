@@ -21,21 +21,54 @@
 <header class="topbar topbar-clean">
   <div class="container topbar-inner topbar-inner-clean topbar-row">
     
-    <!-- Marca (izquierda) -->
-    <a class="topbar-brand" href="index.html">
-      <span class="topbar-brand-name">Silmare</span>
-      <span class="topbar-brand-sub">Desarrollos</span>
-    </a>
+    <div class="topbar-left">
+      <!-- Marca (izquierda) -->
+      <a class="topbar-brand" href="index.html">
+        <span class="topbar-icon" aria-hidden="true">SM</span>
+        <span class="topbar-brand-text">
+          <span class="topbar-brand-name">Silmare</span>
+          <span class="topbar-brand-sub">Desarrollos</span>
+        </span>
+      </a>
 
-    <!-- Nav (derecha) -->
-    <nav class="topnav">
-      <a href="#proyectos">Proyectos</a>
-      <a href="#beneficios">Beneficios</a>
-      <a href="login.html" class="btn btn-outline">Panel</a>
-    </nav>
+      <!-- Nav (desktop) -->
+      <nav class="topnav topnav-desktop">
+        <a href="#proyectos">Proyectos</a>
+        <a href="#beneficios">Beneficios</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#contacto">Contacto</a>
+        <a href="login.html">Panel</a>
+      </nav>
+    </div>
+
+    <!-- Botón menú (derecha) -->
+    <button class="menu-toggle" id="menuToggle" aria-controls="menuDrawer" aria-expanded="false" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
   </div>
 </header>
+
+<!-- Menú desplegable -->
+<div class="menu-drawer" id="menuDrawer" aria-hidden="true">
+  <div class="menu-head">
+    <div class="menu-brand">
+      <span class="menu-brand-name">Silmare</span>
+      <span class="menu-brand-sub">Desarrollos</span>
+    </div>
+    <button class="menu-close" id="menuClose" type="button" aria-label="Cerrar menú">×</button>
+  </div>
+  <nav class="menu-nav">
+    <a href="#proyectos">Proyectos</a>
+    <a href="#beneficios">Beneficios</a>
+    <a href="#nosotros">Nosotros</a>
+    <a href="#contacto">Contacto</a>
+    <a href="login.html">Panel</a>
+  </nav>
+</div>
+<div class="menu-backdrop" id="menuBackdrop" aria-hidden="true"></div>
 
 <!-- Hero -->
 <section class="hero2">

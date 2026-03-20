@@ -8,11 +8,13 @@
 </head>
 <body>
 
-  <header style="display:flex; justify-content:space-between; align-items:center;">
-    <h1>Panel</h1>
-    <div style="display:flex; gap:10px; align-items:center;">
-      <a class="btn" href="index.html">Ver web</a>
-      <button class="btn" id="btnLogout" type="button">Salir</button>
+  <header class="panel-topbar">
+    <div class="panel-topbar-inner">
+      <h1 class="panel-title">Panel</h1>
+      <div class="panel-topbar-actions">
+        <a class="btn" href="index.html">Ver web</a>
+        <button class="btn" id="btnLogout" type="button">Salir</button>
+      </div>
     </div>
   </header>
 
@@ -20,8 +22,8 @@
 
     <section class="panel-grid">
       <aside class="panel-sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-          <h2 style="margin:0;">Proyectos</h2>
+        <div class="panel-sidebar-head">
+          <h2 class="panel-sidebar-title">Proyectos</h2>
           <button class="btn" id="btnNuevo" type="button">+ Nuevo</button>
         </div>
 
@@ -29,8 +31,8 @@
       </aside>
 
       <section class="panel-editor">
-        <h2 id="editorTitulo" style="margin-top:0;">Editar proyecto</h2>
-        <p id="editorHint" class="muted" style="margin:6px 0 12px;">Seleccioná un proyecto o creá uno nuevo para editar.</p>
+        <h2 id="editorTitulo" class="panel-editor-title">Editar proyecto</h2>
+        <p id="editorHint" class="muted panel-editor-hint">Seleccioná un proyecto o creá uno nuevo para editar.</p>
 
         <form id="formProyecto" class="form-proyecto">
           <input type="hidden" id="p_id" />
@@ -85,89 +87,132 @@
           <hr />
 
           <!-- =========================
-               FOTOS DEL PROYECTO
+               AVANCES
           ========================== -->
-          <h3>Fotos</h3>
-          <p class="muted small">Subí fotos reales. Se previsualizan acá y luego se guardan.</p>
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Avances</h3>
+              <p class="muted small">Subí fotos o videos con fecha para mostrar el progreso de obra.</p>
+            </div>
 
-          <div class="form-row">
-            <input id="inputFotos" type="file" accept="image/*" multiple />
-            <button class="btn" id="btnLimpiarFotos" type="button">Limpiar nuevas</button>
+            <div class="form-row">
+              <label>
+                Fecha del avance
+                <input id="a_fecha" type="date" />
+              </label>
+              <label>
+                Foto o video
+                <input id="a_media" type="file" accept="image/*,video/*" />
+              </label>
+            </div>
+
+            <div class="unidad-acciones">
+              <button class="btn" id="btnAgregarAvance" type="button">Agregar avance</button>
+            </div>
+
+            <div id="listaAvancesPanel" class="lista-avances"></div>
           </div>
 
-          <div id="previewFotos" class="grid-fotos"></div>
+          <hr />
 
-          <!-- (opcional) mantenemos este div por compatibilidad si tu panel.js lo usa -->
-          <div id="listaFotos" style="display:none;"></div>
+          <!-- =========================
+               FOTOS DEL PROYECTO
+          ========================== -->
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Fotos</h3>
+              <p class="muted small">Subí fotos reales. Se previsualizan acá y luego se guardan.</p>
+            </div>
+
+            <div class="form-row">
+              <input id="inputFotos" type="file" accept="image/*" multiple />
+              <button class="btn" id="btnLimpiarFotos" type="button">Limpiar nuevas</button>
+            </div>
+
+            <div id="previewFotos" class="grid-fotos"></div>
+
+            <!-- (opcional) mantenemos este div por compatibilidad si tu panel.js lo usa -->
+            <div id="listaFotos" style="display:none;"></div>
+          </div>
 
           <hr />
 
           <!-- =========================
                PLANOS (NUEVO)
           ========================== -->
-          <h3>Planos</h3>
-          <p class="muted small">
-            Subí imágenes o PDF de planos. Se mostrarán al tocar “Ver planos”.
-          </p>
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Planos</h3>
+              <p class="muted small">
+                Subí imágenes o PDF de planos. Se mostrarán al tocar “Ver planos”.
+              </p>
+            </div>
 
-          <div class="form-row">
-            <input id="inputPlanos" type="file" accept="image/*,application/pdf" multiple />
-            <button class="btn" id="btnLimpiarPlanos" type="button">Limpiar nuevos</button>
+            <div class="form-row">
+              <input id="inputPlanos" type="file" accept="image/*,application/pdf" multiple />
+              <button class="btn" id="btnLimpiarPlanos" type="button">Limpiar nuevos</button>
+            </div>
+
+            <div id="previewPlanos" class="grid-fotos"></div>
           </div>
-
-          <div id="previewPlanos" class="grid-fotos"></div>
 
           <hr />
 
           <!-- =========================
                UNIDADES
           ========================== -->
-          <h3>Unidades</h3>
+          <div class="panel-section">
+            <div class="panel-section-head">
+              <h3>Unidades</h3>
+              <p class="muted small">Carga los datos y agrega unidad por unidad.</p>
+            </div>
 
-          <div class="unidades-form">
-            <input id="u_nombre" type="text" placeholder="Unidad (ej: A)" />
-            <input id="u_amb" type="number" placeholder="Ambientes" />
-           <input id="u_metros" type="number" placeholder="m²" />
-           <div class="precio-input">
-             <select id="u_moneda">
-               <option value="USD">USD</option>
-               <option value="ARS">ARS</option>
-             </select>
-             <input id="u_precio" type="text" placeholder="Precio (ej: 95.000)" />
-           </div>
-            <select id="u_piso">
-              <option value="Planta baja">Planta baja</option>
+            <div class="unidades-form">
+              <input id="u_nombre" type="text" placeholder="Unidad (ej: A)" />
+              <input id="u_amb" type="number" placeholder="Ambientes" />
+              <input id="u_metros" type="number" placeholder="m?" />
+              <div class="precio-input">
+                <select id="u_moneda">
+                  <option value="USD">USD</option>
+                  <option value="ARS">ARS</option>
+                </select>
+                <input id="u_precio" type="text" placeholder="Precio (ej: 95.000)" />
+              </div>
+              <select id="u_piso">
+                <option value="Planta baja">Planta baja</option>
               <option value="1° piso">1° piso</option>
               <option value="2° piso">2° piso</option>
               <option value="3° piso">3° piso</option>
               <option value="4° piso">4° piso</option>
-              <option value="Cocheras">Cocheras</option>
-              <option value="Terraza">Terraza</option>
-              <option value="Otro">Otro</option>
-            </select>
-            <select id="u_estado">
-              <option value="disponible">Disponible</option>
-              <option value="reservada">Reservada</option>
-              <option value="vendida">Vendida</option>
-            </select>
-          </div>
-
-          <div class="unidad-archivos">
-            <label>
-              Fotos de la unidad
-              <input id="u_fotos" type="file" accept="image/*" multiple />
-            </label>
-            <label>
-              PDF de la unidad
-              <input id="u_pdf" type="file" accept="application/pdf" />
-            </label>
-            <p class="muted small">Estos archivos se asignan a la unidad que agregues a continuación.</p>
-            <div class="unidad-acciones">
-              <button class="btn" id="btnAgregarUnidad" type="button">Agregar</button>
+                <option value="Cocheras">Cocheras</option>
+                <option value="Terraza">Terraza</option>
+                <option value="Otro">Otro</option>
+              </select>
+              <select id="u_estado">
+                <option value="disponible">Disponible</option>
+                <option value="reservada">Reservada</option>
+                <option value="vendida">Vendida</option>
+              </select>
             </div>
-          </div>
 
-          <div id="listaUnidadesPanel" class="lista-unidades"></div>
+            <div class="unidad-archivos">
+              <label>
+                Fotos de la unidad
+                <input id="u_fotos" type="file" accept="image/*" multiple />
+              </label>
+              <label>
+                PDF de la unidad
+                <input id="u_pdf" type="file" accept="application/pdf" />
+              </label>
+              <p class="muted small">Estos archivos se asignan a la unidad que agregues a continuaci?n.</p>
+              <div class="unidad-acciones">
+                <button class="btn" id="btnAgregarUnidad" type="button">Agregar</button>
+                <button class="btn btn-ghost is-hidden" id="btnCancelarEdicion" type="button">Cancelar</button>
+              </div>
+            </div>
+
+            <div id="listaUnidadesPanel" class="lista-unidades"></div>
+          </div>
 
           <hr />
 

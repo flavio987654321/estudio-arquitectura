@@ -158,43 +158,107 @@ function iniciarPanel(user) {
  function renderUnidades(p) {
   listaUnidadesPanel.innerHTML = "";
 
+  if (!p.unidades || !p.unidades.length) {
+    listaUnidadesPanel.innerHTML = "<p>No hay unidades cargadas.</p>";
+    return;
+  }
+
+  const grupos = {};
   (p.unidades || []).forEach((u, idx) => {
-    const row = document.createElement("div");
-    row.className = "unidad-row";
+    const key = (u.piso || "Sin piso").trim() || "Sin piso";
+    if (!grupos[key]) grupos[key] = [];
+    grupos[key].push({ u, idx });
+  });
 
-    const moneda = (u.moneda || "USD").toUpperCase();
-    const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
-    const fotosCount = Array.isArray(u.fotos) ? u.fotos.length : (u.__fotosFiles?.length || 0);
-    const hasPdf = !!u.pdfUrl || !!u.__pdfFile;
+  const ordenarPisos = (a, b) => {
+    const rank = (s) => {
+      const t = String(s || "").toLowerCase();
+      if (t.includes("planta")) return 0;
+      const m = t.match(/\d+/);
+      if (m) return parseInt(m[0], 10);
+      if (t.includes("cocher")) return 100;
+      if (t.includes("terraza")) return 101;
+      if (t.includes("otro")) return 102;
+      if (t.includes("sin")) return 103;
+      return 200;
+    };
+    const ra = rank(a);
+    const rb = rank(b);
+    if (ra !== rb) return ra - rb;
+    return a.localeCompare(b, "es", { numeric: true });
+  };
 
-    row.innerHTML = `
-      <div>
-        <strong>${u.nombre}</strong>
-        <div class="info">🧱 ${u.piso || "Sin piso"}</div>
-        <div class="info">
-          🛏️ ${u.ambientes || "-"} amb · 📐 ${u.metros || "-"} m² · 💰 ${precioTxt}
-        </div>
-        <div class="info">
-          📷 ${fotosCount} fotos · 📄 ${hasPdf ? "PDF" : "sin PDF"}
-        </div>
-      </div>
-
-      <div class="unidad-actions">
-        <span class="estado ${u.estado}">${u.estado}</span>
-        <button type="button" class="btn mini danger">✕</button>
-      </div>
+  Object.keys(grupos).sort(ordenarPisos).forEach(piso => {
+    const bloque = document.createElement("details");
+    bloque.className = "unidades-piso piso-accordion";
+    bloque.innerHTML = `
+      <summary class="piso-title">
+        <span>${piso}</span>
+        <span class="piso-count">${grupos[piso].length}</span>
+      </summary>
     `;
 
-    row.querySelector(".danger").onclick = () => {
-      p.unidades.splice(idx, 1);
-      renderUnidades(p);
-    };
+    grupos[piso].forEach(({ u, idx }) => {
+      const row = document.createElement("div");
+      row.className = "unidad-row";
 
-    listaUnidadesPanel.appendChild(row);
+      const moneda = (u.moneda || "USD").toUpperCase();
+      const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
+      const fotosCount = Array.isArray(u.fotos) ? u.fotos.length : (u.__fotosFiles?.length || 0);
+      const hasPdf = !!u.pdfUrl || !!u.__pdfFile;
+
+      row.innerHTML = `
+          <div>
+            <strong>${u.nombre}</strong>
+            <div class="info">🧱 Piso: ${u.piso || "Sin piso"}</div>
+            <div class="info">
+              🛋️ Amb: ${u.ambientes || "-"} | 📐 Metros: ${u.metros || "-"} m2 | 💰 Precio: ${precioTxt}
+            </div>
+            <div class="info">
+              📷 Fotos: ${fotosCount} | 📄 PDF: ${hasPdf ? "si" : "no"}
+            </div>
+          </div>
+
+        <div class="unidad-actions">
+          <span class="estado ${u.estado}">${u.estado}</span>
+          <button type="button" class="btn mini">Editar</button>
+          <button type="button" class="btn mini danger">X</button>
+        </div>
+      `;
+
+      row.querySelector(".btn.mini:not(.danger)")?.addEventListener("click", () => {
+        unidadEditIndex = idx;
+        u_nombre.value = u.nombre || "";
+        u_amb.value = u.ambientes || "";
+        u_metros.value = u.metros || "";
+        u_precio.value = u.precio || "";
+        if (u_moneda) u_moneda.value = (u.moneda || "USD").toUpperCase();
+        if (u_piso) u_piso.value = u.piso || "Planta baja";
+        u_estado.value = u.estado || "disponible";
+
+        unidadFotosNuevas = [];
+        unidadPdfNuevo = null;
+        if (u_fotos) u_fotos.value = "";
+        if (u_pdf) u_pdf.value = "";
+
+        if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Actualizar unidad";
+        if (btnCancelarEdicion) btnCancelarEdicion.classList.remove("is-hidden");
+        setMsg("Editando unidad. Actualiza y guarda.");
+      });
+
+      row.querySelector(".danger").onclick = () => {
+        p.unidades.splice(idx, 1);
+        renderUnidades(p);
+      };
+
+      bloque.appendChild(row);
+    });
+
+    listaUnidadesPanel.appendChild(bloque);
   });
 }
 
-  function renderFotosPreview() {
+function renderFotosPreview() {
     if (!previewFotos) return;
     previewFotos.innerHTML = "";
 
