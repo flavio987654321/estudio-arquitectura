@@ -140,16 +140,22 @@ function iniciarPanel(user) {
   const u_piso = document.getElementById("u_piso");
   const u_estado = document.getElementById("u_estado");
   const btnAgregarUnidad = document.getElementById("btnAgregarUnidad");
+  const btnCancelarEdicion = document.getElementById("btnCancelarEdicion");
   const listaUnidadesPanel = document.getElementById("listaUnidadesPanel");
   const u_fotos = document.getElementById("u_fotos");
   const u_pdf = document.getElementById("u_pdf");
 
   const btnEliminar = document.getElementById("btnEliminar");
+  const unidadSheet = document.getElementById("unidadSheet");
+  const unidadEditBtn = document.getElementById("unidadEditBtn");
+  const unidadDeleteBtn = document.getElementById("unidadDeleteBtn");
+  const unidadCancelBtn = document.getElementById("unidadCancelBtn");
 
   let proyectos = [];
   let activoId = null;
   let unidadFotosNuevas = [];
   let unidadPdfNuevo = null;
+  let unidadEditIndex = null;
 
   // Nosotros (global)
   let nosotrosData = null;
@@ -224,6 +230,77 @@ function iniciarPanel(user) {
     return proyectos.find(p => p.id === activoId) || null;
   }
 
+  function editarUnidad(idx) {
+    const p = getActivo();
+    if (!p || !p.unidades || !p.unidades[idx]) return;
+    const u = p.unidades[idx];
+    unidadEditIndex = idx;
+    u_nombre.value = u.nombre || "";
+    u_amb.value = u.ambientes || "";
+    u_metros.value = u.metros || "";
+    u_precio.value = u.precio || "";
+    if (u_moneda) u_moneda.value = (u.moneda || "USD").toUpperCase();
+    if (u_piso) u_piso.value = u.piso || "Planta baja";
+    u_estado.value = u.estado || "disponible";
+
+    unidadFotosNuevas = [];
+    unidadPdfNuevo = null;
+    if (u_fotos) u_fotos.value = "";
+    if (u_pdf) u_pdf.value = "";
+
+    if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Actualizar unidad";
+    if (btnCancelarEdicion) btnCancelarEdicion.classList.remove("is-hidden");
+    setMsg("Editando unidad. Actualiza y guarda.");
+
+    // Llevar la vista al formulario de edición
+    if (u_nombre) {
+      u_nombre.scrollIntoView({ behavior: "smooth", block: "start" });
+      u_nombre.focus({ preventScroll: true });
+    }
+  }
+
+  async function guardarUnidadesEnFirestore(p) {
+    if (!p || !p.id) return;
+    await setDoc(
+      doc(db, "proyectos", p.id),
+      {
+        unidades: p.unidades || [],
+        updatedAt: serverTimestamp()
+      },
+      { merge: true }
+    );
+  }
+
+  async function eliminarUnidad(idx) {
+    const p = getActivo();
+    if (!p || !p.unidades || !p.unidades[idx]) return;
+    const u = p.unidades[idx];
+    const ok = confirm(`¿Eliminar la unidad "${u?.nombre || "sin nombre"}"?`);
+    if (!ok) return;
+    p.unidades.splice(idx, 1);
+    renderUnidades(p);
+    setMsg("Unidad eliminada. Guardando...");
+
+    try {
+      await guardarUnidadesEnFirestore(p);
+      setMsg("Unidad eliminada y guardada ✅");
+    } catch (err) {
+      console.error("Error guardando unidades:", err);
+      setMsg("No se pudo guardar. Guardá cambios manualmente.");
+    }
+  }
+
+  function openUnidadActions(idx) {
+    if (!unidadSheet) return;
+    unidadSheet.dataset.idx = String(idx);
+    unidadSheet.classList.add("open");
+  }
+
+  function closeUnidadActions() {
+    if (!unidadSheet) return;
+    unidadSheet.classList.remove("open");
+  }
+
  function renderUnidades(p) {
   listaUnidadesPanel.innerHTML = "";
 
@@ -277,48 +354,45 @@ function iniciarPanel(user) {
       const hasPdf = !!u.pdfUrl || !!u.__pdfFile;
 
       row.innerHTML = `
-          <div>
-            <strong>${u.nombre}</strong>
-            <div class="info">🧱 Piso: ${u.piso || "Sin piso"}</div>
-            <div class="info">
-              🛋️ Amb: ${u.ambientes || "-"} | 📐 Metros: ${u.metros || "-"} m2 | 💰 Precio: ${precioTxt}
+          <div class="unidad-row-body">
+            <div class="unidad-row-head">
+              <strong>${u.nombre}</strong>
+              <span class="estado ${u.estado} unidad-estado unidad-estado-mobile">${u.estado}</span>
             </div>
-            <div class="info">
-              📷 Fotos: ${fotosCount} | 📄 PDF: ${hasPdf ? "si" : "no"}
+            <ul class="unidad-info-list">
+              <li><span class="label">Piso</span><span class="value">${u.piso || "Sin piso"}</span></li>
+              <li><span class="label">Ambientes</span><span class="value">${u.ambientes || "-"}</span></li>
+              <li><span class="label">Metros</span><span class="value">${u.metros || "-"} m2</span></li>
+              <li><span class="label">Precio</span><span class="value">${precioTxt}</span></li>
+              <li><span class="label">Fotos</span><span class="value">${fotosCount}</span></li>
+              <li>
+                <span class="label">PDF</span>
+                <span class="value">${hasPdf ? "sí" : "no"}</span>
+              </li>
+            </ul>
+
+            <div class="unidad-actions unidad-actions-desktop">
+              <span class="estado ${u.estado} unidad-estado unidad-estado-desktop">${u.estado}</span>
+              <button type="button" class="btn mini">Editar</button>
+              <button type="button" class="btn mini danger">Eliminar</button>
             </div>
           </div>
 
-        <div class="unidad-actions">
-          <span class="estado ${u.estado}">${u.estado}</span>
-          <button type="button" class="btn mini">Editar</button>
-          <button type="button" class="btn mini danger">X</button>
-        </div>
+        <button type="button" class="unidad-menu unidad-actions-mobile" aria-label="Acciones" data-idx="${idx}">⋯</button>
       `;
 
-      row.querySelector(".btn.mini:not(.danger)")?.addEventListener("click", () => {
-        unidadEditIndex = idx;
-        u_nombre.value = u.nombre || "";
-        u_amb.value = u.ambientes || "";
-        u_metros.value = u.metros || "";
-        u_precio.value = u.precio || "";
-        if (u_moneda) u_moneda.value = (u.moneda || "USD").toUpperCase();
-        if (u_piso) u_piso.value = u.piso || "Planta baja";
-        u_estado.value = u.estado || "disponible";
-
-        unidadFotosNuevas = [];
-        unidadPdfNuevo = null;
-        if (u_fotos) u_fotos.value = "";
-        if (u_pdf) u_pdf.value = "";
-
-        if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Actualizar unidad";
-        if (btnCancelarEdicion) btnCancelarEdicion.classList.remove("is-hidden");
-        setMsg("Editando unidad. Actualiza y guarda.");
+      row.querySelector(".unidad-actions-desktop .btn.mini:not(.danger)")?.addEventListener("click", () => {
+        editarUnidad(idx);
       });
 
-      row.querySelector(".danger").onclick = () => {
-        p.unidades.splice(idx, 1);
-        renderUnidades(p);
+      row.querySelector(".unidad-actions-desktop .danger").onclick = () => {
+        eliminarUnidad(idx);
       };
+
+      const menuBtn = row.querySelector(".unidad-menu");
+      menuBtn?.addEventListener("click", () => {
+        openUnidadActions(idx);
+      });
 
       bloque.appendChild(row);
     });
@@ -562,6 +636,23 @@ function renderFotosPreview() {
     await cargarNosotrosEnEditor();
   });
 
+  unidadEditBtn?.addEventListener("click", () => {
+    const idx = Number(unidadSheet?.dataset.idx || "-1");
+    if (idx >= 0) editarUnidad(idx);
+    closeUnidadActions();
+  });
+
+  unidadDeleteBtn?.addEventListener("click", async () => {
+    const idx = Number(unidadSheet?.dataset.idx || "-1");
+    if (idx >= 0) await eliminarUnidad(idx);
+    closeUnidadActions();
+  });
+
+  unidadCancelBtn?.addEventListener("click", closeUnidadActions);
+  unidadSheet?.addEventListener("click", (e) => {
+    if (e.target === unidadSheet) closeUnidadActions();
+  });
+
   u_fotos?.addEventListener("change", () => {
     const files = Array.from(u_fotos.files || []);
     if (!files.length) return;
@@ -598,6 +689,9 @@ function renderFotosPreview() {
     renderPlanosPreview();
 
     listaUnidadesPanel.innerHTML = "";
+    unidadEditIndex = null;
+    if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Agregar";
+    if (btnCancelarEdicion) btnCancelarEdicion.classList.add("is-hidden");
   }
 
   function cargarEnEditor() {
@@ -631,6 +725,9 @@ function renderFotosPreview() {
     renderPlanosPreview();
 
     renderUnidades(p);
+    unidadEditIndex = null;
+    if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Agregar";
+    if (btnCancelarEdicion) btnCancelarEdicion.classList.add("is-hidden");
   }
 
   // Nuevo proyecto
@@ -689,17 +786,30 @@ btnAgregarUnidad?.addEventListener("click", () => {
   }
 
   p.unidades = p.unidades || [];
-  p.unidades.push({
+  const baseUnidad = unidadEditIndex !== null ? (p.unidades[unidadEditIndex] || {}) : {};
+  const nuevaUnidad = {
+    ...baseUnidad,
     nombre: nom,
     piso: pis,
     ambientes: amb,
     metros: met,
     precio: pre,
     moneda: mon,
-    estado: est,
-    __fotosFiles: fotosFiles,
-    __pdfFile: pdfFile
-  });
+    estado: est
+  };
+
+  if (fotosFiles.length) {
+    nuevaUnidad.__fotosFiles = fotosFiles;
+  }
+  if (pdfFile) {
+    nuevaUnidad.__pdfFile = pdfFile;
+  }
+
+  if (unidadEditIndex !== null) {
+    p.unidades[unidadEditIndex] = nuevaUnidad;
+  } else {
+    p.unidades.push(nuevaUnidad);
+  }
 
   // limpiar formulario
   u_nombre.value = "";
@@ -715,8 +825,44 @@ btnAgregarUnidad?.addEventListener("click", () => {
   if (u_pdf) u_pdf.value = "";
 
   renderUnidades(p);
-  setMsg("Unidad agregada. Recordá guardar cambios.");
+  const estabaEditando = unidadEditIndex !== null;
+  if (estabaEditando) {
+    setMsg("Unidad actualizada. Guardando...");
+  } else {
+    setMsg("Unidad agregada. Guardando...");
+  }
+
+  unidadEditIndex = null;
+  if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Agregar";
+  if (btnCancelarEdicion) btnCancelarEdicion.classList.add("is-hidden");
+
+  guardarUnidadesEnFirestore(p)
+    .then(() => {
+      setMsg(estabaEditando ? "Unidad actualizada y guardada ✅" : "Unidad agregada y guardada ✅");
+    })
+    .catch((err) => {
+      console.error("Error guardando unidades:", err);
+      setMsg("No se pudo guardar. Guardá cambios manualmente.");
+    });
 }); 
+
+btnCancelarEdicion?.addEventListener("click", () => {
+  unidadEditIndex = null;
+  u_nombre.value = "";
+  u_amb.value = "";
+  u_metros.value = "";
+  u_precio.value = "";
+  if (u_moneda) u_moneda.value = "USD";
+  if (u_piso) u_piso.value = "Planta baja";
+  u_estado.value = "disponible";
+  unidadFotosNuevas = [];
+  unidadPdfNuevo = null;
+  if (u_fotos) u_fotos.value = "";
+  if (u_pdf) u_pdf.value = "";
+  if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Agregar";
+  btnCancelarEdicion.classList.add("is-hidden");
+  setMsg("Edición cancelada.");
+});
 
   // Guardar Nosotros (general)
   formNosotros?.addEventListener("submit", async (e) => {

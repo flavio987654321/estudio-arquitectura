@@ -547,13 +547,18 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
 
       const estadoNorm = (u.estado || "disponible").toLowerCase();
       if (estadoNorm === "vendida") div.classList.add("vendida");
+      if (estadoNorm === "reservada") div.classList.add("reservada");
       div.dataset.piso = piso;
       div.dataset.estado = estadoNorm;
 
       const moneda = (u.moneda || "USD").toUpperCase();
       const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
       const wpp = proyecto.whatsapp || "";
-      const baseMsg = proyecto.mensajeWpp || `Hola! Quiero info sobre ${proyecto.nombre}.`;
+      let baseMsg = proyecto.mensajeWpp || `Hola! Quiero info sobre ${proyecto.nombre}.`;
+      if (estadoNorm === "reservada") {
+        const pisoTxt = u.piso || "-";
+        baseMsg = `Hola! Vi la unidad ${u.nombre || "-"} (${pisoTxt}) en ${proyecto.nombre}. Está reservada, ¿hay disponibilidad o lista de espera? Si no, ¿me podés ofrecer alternativas similares?`;
+      }
       const extra = [
         `Unidad: ${u.nombre || "-"}`,
         `Piso: ${u.piso || "-"}`,
@@ -561,7 +566,9 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
         `Metros: ${u.metros || "-"} m²`,
         `Precio: ${precioTxt}`
       ].join(" | ");
-      const wppMsg = encodeURIComponent(`${baseMsg} (${extra})`);
+      const wppMsg = encodeURIComponent(
+        estadoNorm === "reservada" ? baseMsg : `${baseMsg} (${extra})`
+      );
       const wppHref = wpp ? `https://wa.me/${wpp}?text=${wppMsg}` : "";
       const mostrarConsultar = wppHref && estadoNorm !== "vendida";
 
@@ -571,9 +578,34 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
         </div>
 
         <div class="unidad-info">
-          <span>🛏️ ${u.ambientes || "-"} amb</span>
-          <span>📐 ${u.metros || "-"} m²</span>
-          <span>💰 ${precioTxt}</span>
+          <div class="info-item info-amb">
+            <span class="info-label">Ambientes</span>
+            <span class="info-value">${u.ambientes || "-"} amb</span>
+          </div>
+          <div class="info-item info-metros">
+            <span class="info-label">Metros</span>
+            <span class="info-value">${u.metros || "-"} m²</span>
+          </div>
+          <div class="info-item info-precio">
+            <span class="info-label">Precio</span>
+            <span class="info-value">${precioTxt}</span>
+          </div>
+          <div class="info-item info-fotos">
+            <span class="info-label">Fotos</span>
+            ${
+              (Array.isArray(u.fotos) && u.fotos.length)
+                ? `<button type="button" class="info-action" data-action="fotos" aria-label="Ver fotos">📷 Ver</button>`
+                : `<span class="info-muted">No</span>`
+            }
+          </div>
+          <div class="info-item info-pdf">
+            <span class="info-label">PDF</span>
+            ${
+              u.pdfUrl
+                ? `<a class="info-action" href="${u.pdfUrl}" target="_blank" rel="noopener" aria-label="Abrir PDF">⬇️ Abrir</a>`
+                : `<span class="info-muted">No</span>`
+            }
+          </div>
         </div>
 
         <div class="unidad-actions">
@@ -587,6 +619,11 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
 
       const info = div.querySelector(".unidad-info");
       if (info) {
+        const fotosAction = info.querySelector('[data-action="fotos"]');
+        if (fotosAction && Array.isArray(u.fotos) && u.fotos.length) {
+          fotosAction.addEventListener("click", () => openLightboxWith(u.fotos, 0));
+        }
+
         const media = document.createElement("div");
         media.className = "unidad-media";
 
