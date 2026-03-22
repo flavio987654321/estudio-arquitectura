@@ -248,8 +248,31 @@ if (metricProyectos) {
 
       const p1Img = document.getElementById("persona1Img");
       const p2Img = document.getElementById("persona2Img");
-      if (p1Img && data.personas?.[0]?.fotoUrl) p1Img.src = data.personas[0].fotoUrl;
-      if (p2Img && data.personas?.[1]?.fotoUrl) p2Img.src = data.personas[1].fotoUrl;
+      const bindImg = (img) => {
+        if (!img) return;
+        const wrap = img.closest(".nosotros-img");
+        if (!wrap) return;
+        wrap.classList.add("is-loading");
+        const done = () => {
+          wrap.classList.remove("is-loading");
+          wrap.classList.add("is-loaded");
+        };
+        if (img.complete && img.naturalWidth > 0) {
+          done();
+        } else {
+          img.addEventListener("load", done, { once: true });
+          img.addEventListener("error", done, { once: true });
+        }
+      };
+
+      if (p1Img && data.personas?.[0]?.fotoUrl) {
+        p1Img.src = data.personas[0].fotoUrl;
+        bindImg(p1Img);
+      }
+      if (p2Img && data.personas?.[1]?.fotoUrl) {
+        p2Img.src = data.personas[1].fotoUrl;
+        bindImg(p2Img);
+      }
 
       const renderList = (id, items) => {
         const ul = document.getElementById(id);
@@ -314,6 +337,29 @@ if (grid && PROYECTOS_APP.length) {
       badge.className = "badge-destacado";
       badge.textContent = "Destacado";
       card.appendChild(badge);
+    }
+
+    const normalizeEstado = (val) => {
+      const v = (val || "").toString().toLowerCase().trim();
+      if (!v) return "";
+      if (v.includes("pausa")) return "en_pausa";
+      if (v.includes("termin")) return "terminado";
+      if (v.includes("pre")) return "preventa";
+      if (v.includes("obra")) return "en_obra";
+      return v.replace(/\s+/g, "_");
+    };
+    const estado = normalizeEstado(p.estadoObra);
+    const estadoLabels = {
+      en_obra: "En obra",
+      terminado: "Terminado",
+      en_pausa: "En pausa",
+      preventa: "Preventa"
+    };
+    if (estado && estadoLabels[estado]) {
+      const est = document.createElement("div");
+      est.className = `badge-estado estado-${estado}`;
+      est.textContent = estadoLabels[estado];
+      card.appendChild(est);
     }
 
     const h4 = document.createElement("h4");

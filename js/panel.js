@@ -82,6 +82,7 @@ function iniciarPanel(user) {
   const p_puntos = document.getElementById("p_puntos");
   const p_calidad = document.getElementById("p_calidad");
   const p_destacado = document.getElementById("p_destacado");
+  const p_estado = document.getElementById("p_estado");
   const p_whatsapp = document.getElementById("p_whatsapp");
   const p_mensajeWpp = document.getElementById("p_mensajeWpp");
 
@@ -698,6 +699,7 @@ function renderFotosPreview() {
     p_puntos.value = "";
     p_calidad.value = "";
     p_destacado.checked = false;
+    if (p_estado) p_estado.value = "en_obra";
     p_whatsapp.value = "";
     p_mensajeWpp.value = "";
 
@@ -732,6 +734,7 @@ function renderFotosPreview() {
     p_puntos.value = Array.isArray(p.puntosClave) ? p.puntosClave.join("\n") : "";
     p_calidad.value = Array.isArray(p.calidadConstructiva) ? p.calidadConstructiva.join("\n") : "";
     p_destacado.checked = !!p.destacado;
+    if (p_estado) p_estado.value = p.estadoObra || "en_obra";
     p_whatsapp.value = p.whatsapp || "";
     p_mensajeWpp.value = p.mensajeWpp || "";
 
@@ -769,6 +772,7 @@ function renderFotosPreview() {
       mensajeWpp: "",
       calidadConstructiva: [],
       destacado: false,
+      estadoObra: "en_obra",
       owner: auth.currentUser?.uid || "",
       fotos: [],
       planos: [],     // 👈 NUEVO
@@ -990,6 +994,7 @@ btnCancelarEdicion?.addEventListener("click", () => {
         .map(x => x.trim())
         .filter(Boolean);
       p.destacado = !!p_destacado.checked;
+      p.estadoObra = (p_estado?.value || "").trim() || "en_obra";
       p.whatsapp = (p_whatsapp.value || "").trim();
       p.mensajeWpp = (p_mensajeWpp.value || "").trim();
       if (!p.owner) p.owner = auth.currentUser?.uid || "";

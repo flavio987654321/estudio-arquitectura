@@ -1492,6 +1492,29 @@ body.contacto-open .contacto-panel{
   border-bottom: 1px solid var(--border);
   z-index: 2;
 }
+.badge-estado{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #111;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  z-index: 2;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.badge-estado.estado-en_obra,
+.badge-estado.estado-terminado,
+.badge-estado.estado-en_pausa,
+.badge-estado.estado-preventa{
+  background: #111;
+  color: #fff;
+  border-color: rgba(255,255,255,0.25);
+}
 .contacto-panel-head-inner{
   display: flex;
   align-items: center;
@@ -2653,14 +2676,42 @@ body.nosotros-open .nosotros-panel{
 
 .nosotros-img{
   height: 440px;
-  background: #ddd;
+  background: #fff;
+  border: 1px solid #fff;
+  position: relative;
+  overflow: hidden;
 }
 
 .nosotros-img img{
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: 50% 20%;
   display: block;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.nosotros-img.is-loaded img{
+  opacity: 1;
+}
+
+.nosotros-img.is-loading::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #f2f2f2 0%, #e6e6e6 50%, #f2f2f2 100%);
+  background-size: 200% 100%;
+  animation: imgShimmer 1.2s ease-in-out infinite;
+}
+
+.nosotros-img img[data-focus="center"]{ object-position: 50% 50%; }
+.nosotros-img img[data-focus="top"]{ object-position: 50% 10%; }
+.nosotros-img img[data-focus="bottom"]{ object-position: 50% 90%; }
+
+@keyframes imgShimmer{
+  0%{ background-position: 200% 0; }
+  100%{ background-position: -200% 0; }
 }
 
 .nosotros-card h3{
