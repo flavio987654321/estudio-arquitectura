@@ -137,6 +137,9 @@ function iniciarPanel(user) {
   const u_metros = document.getElementById("u_metros");
   const u_precio = document.getElementById("u_precio");
   const u_moneda = document.getElementById("u_moneda");
+  const u_orientacion = document.getElementById("u_orientacion");
+  const u_vista = document.getElementById("u_vista");
+  const u_personas = document.getElementById("u_personas");
   const u_piso = document.getElementById("u_piso");
   const u_estado = document.getElementById("u_estado");
   const btnAgregarUnidad = document.getElementById("btnAgregarUnidad");
@@ -156,6 +159,7 @@ function iniciarPanel(user) {
   let unidadFotosNuevas = [];
   let unidadPdfNuevo = null;
   let unidadEditIndex = null;
+  let unidadHighlightIndex = null;
 
   // Nosotros (global)
   let nosotrosData = null;
@@ -240,6 +244,9 @@ function iniciarPanel(user) {
     u_metros.value = u.metros || "";
     u_precio.value = u.precio || "";
     if (u_moneda) u_moneda.value = (u.moneda || "USD").toUpperCase();
+    if (u_orientacion) u_orientacion.value = u.orientacion || "";
+    if (u_vista) u_vista.value = u.vista || "";
+    if (u_personas) u_personas.value = u.personas || "";
     if (u_piso) u_piso.value = u.piso || "Planta baja";
     u_estado.value = u.estado || "disponible";
 
@@ -347,6 +354,7 @@ function iniciarPanel(user) {
     grupos[piso].forEach(({ u, idx }) => {
       const row = document.createElement("div");
       row.className = "unidad-row";
+      if (unidadHighlightIndex === idx) row.classList.add("unidad-highlight");
 
       const moneda = (u.moneda || "USD").toUpperCase();
       const precioTxt = u.precio ? `${moneda} ${u.precio}` : "Consultar";
@@ -363,6 +371,9 @@ function iniciarPanel(user) {
               <li><span class="label">Piso</span><span class="value">${u.piso || "Sin piso"}</span></li>
               <li><span class="label">Ambientes</span><span class="value">${u.ambientes || "-"}</span></li>
               <li><span class="label">Metros</span><span class="value">${u.metros || "-"} m2</span></li>
+              <li><span class="label">Orientación</span><span class="value">${u.orientacion || "-"}</span></li>
+              <li><span class="label">Vista</span><span class="value">${u.vista || "-"}</span></li>
+              <li><span class="label">Personas</span><span class="value">${u.personas || "-"}</span></li>
               <li><span class="label">Precio</span><span class="value">${precioTxt}</span></li>
               <li><span class="label">Fotos</span><span class="value">${fotosCount}</span></li>
               <li>
@@ -399,6 +410,16 @@ function iniciarPanel(user) {
 
     listaUnidadesPanel.appendChild(bloque);
   });
+
+  if (unidadHighlightIndex !== null) {
+    const el = listaUnidadesPanel.querySelector(".unidad-highlight");
+    if (el) {
+      setTimeout(() => {
+        el.classList.remove("unidad-highlight");
+      }, 1800);
+    }
+    unidadHighlightIndex = null;
+  }
 }
 
 function renderFotosPreview() {
@@ -774,6 +795,9 @@ btnAgregarUnidad?.addEventListener("click", () => {
   const met = u_metros.value.trim();
   const pre = u_precio.value.trim();
   const mon = (u_moneda?.value || "USD").trim();
+  const ori = (u_orientacion?.value || "").trim();
+  const vis = (u_vista?.value || "").trim();
+  const per = (u_personas?.value || "").trim();
   const pis = (u_piso?.value || "").trim();
   const est = u_estado.value;
   const fotosFiles = [...unidadFotosNuevas];
@@ -795,6 +819,9 @@ btnAgregarUnidad?.addEventListener("click", () => {
     metros: met,
     precio: pre,
     moneda: mon,
+    orientacion: ori,
+    vista: vis,
+    personas: per,
     estado: est
   };
 
@@ -807,8 +834,10 @@ btnAgregarUnidad?.addEventListener("click", () => {
 
   if (unidadEditIndex !== null) {
     p.unidades[unidadEditIndex] = nuevaUnidad;
+    unidadHighlightIndex = unidadEditIndex;
   } else {
     p.unidades.push(nuevaUnidad);
+    unidadHighlightIndex = p.unidades.length - 1;
   }
 
   // limpiar formulario
@@ -817,6 +846,9 @@ btnAgregarUnidad?.addEventListener("click", () => {
   u_metros.value = "";
   u_precio.value = "";
   if (u_moneda) u_moneda.value = "USD";
+  if (u_orientacion) u_orientacion.value = "";
+  if (u_vista) u_vista.value = "";
+  if (u_personas) u_personas.value = "";
   if (u_piso) u_piso.value = "Planta baja";
   u_estado.value = "disponible";
   unidadFotosNuevas = [];
@@ -853,6 +885,9 @@ btnCancelarEdicion?.addEventListener("click", () => {
   u_metros.value = "";
   u_precio.value = "";
   if (u_moneda) u_moneda.value = "USD";
+  if (u_orientacion) u_orientacion.value = "";
+  if (u_vista) u_vista.value = "";
+  if (u_personas) u_personas.value = "";
   if (u_piso) u_piso.value = "Planta baja";
   u_estado.value = "disponible";
   unidadFotosNuevas = [];

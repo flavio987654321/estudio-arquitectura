@@ -564,7 +564,10 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
         `Piso: ${u.piso || "-"}`,
         `Ambientes: ${u.ambientes || "-"}`,
         `Metros: ${u.metros || "-"} m²`,
-        `Precio: ${precioTxt}`
+        `Precio: ${precioTxt}`,
+        `Orientación: ${u.orientacion || "-"}`,
+        `Vista: ${u.vista || "-"}`,
+        `Personas: ${u.personas || "-"}`
       ].join(" | ");
       const wppMsg = encodeURIComponent(
         estadoNorm === "reservada" ? baseMsg : `${baseMsg} (${extra})`
@@ -585,6 +588,18 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
           <div class="info-item info-metros">
             <span class="info-label">Metros</span>
             <span class="info-value">${u.metros || "-"} m²</span>
+          </div>
+          <div class="info-item info-orientacion only-mobile">
+            <span class="info-label">Orientación</span>
+            <span class="info-value">${u.orientacion || "-"}</span>
+          </div>
+          <div class="info-item info-vista only-mobile">
+            <span class="info-label">Vista</span>
+            <span class="info-value">${u.vista || "-"}</span>
+          </div>
+          <div class="info-item info-personas only-mobile">
+            <span class="info-label">Personas</span>
+            <span class="info-value">${u.personas || "-"}</span>
           </div>
           <div class="info-item info-precio">
             <span class="info-label">Precio</span>
@@ -623,43 +638,6 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
         if (fotosAction && Array.isArray(u.fotos) && u.fotos.length) {
           fotosAction.addEventListener("click", () => openLightboxWith(u.fotos, 0));
         }
-
-        const media = document.createElement("div");
-        media.className = "unidad-media";
-
-        const hasFotos = Array.isArray(u.fotos) && u.fotos.length;
-        const btnFotos = document.createElement("button");
-        btnFotos.type = "button";
-        btnFotos.className = "btn-icon" + (hasFotos ? " is-active" : " is-disabled");
-        btnFotos.title = hasFotos ? "Ver fotos de la unidad" : "Sin fotos";
-        btnFotos.setAttribute("aria-disabled", hasFotos ? "false" : "true");
-        btnFotos.textContent = "📷";
-        if (hasFotos) {
-          btnFotos.addEventListener("click", () => openLightboxWith(u.fotos, 0));
-        }
-        media.appendChild(btnFotos);
-
-        const hasPdf = !!u.pdfUrl;
-        if (hasPdf) {
-          const aPdf = document.createElement("a");
-          aPdf.className = "btn-icon is-active";
-          aPdf.href = u.pdfUrl;
-          aPdf.target = "_blank";
-          aPdf.rel = "noopener";
-          aPdf.title = "Descargar ficha PDF";
-          aPdf.textContent = "⬇️";
-          media.appendChild(aPdf);
-        } else {
-          const btnPdf = document.createElement("button");
-          btnPdf.type = "button";
-          btnPdf.className = "btn-icon is-disabled";
-          btnPdf.title = "Sin ficha PDF";
-          btnPdf.setAttribute("aria-disabled", "true");
-          btnPdf.textContent = "⬇️";
-          media.appendChild(btnPdf);
-        }
-
-        info.appendChild(media);
       }
 
       bloque.appendChild(div);
