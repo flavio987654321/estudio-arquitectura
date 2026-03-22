@@ -103,7 +103,22 @@
     <div class="galeria-thumbs" id="avancesThumbs" style="margin-top:14px;"></div>
   </div>
 
+  <footer class="footer">
+    <div class="container footer-line">
+      <div class="footer-left">
+        SMR · Desarrollos Silmare S.A.
+      </div>
+
+      <div class="footer-right">
+        © <span id="anioProyecto"></span> Todos los derechos reservados
+      </div>
+    </div>
+  </footer>
+
 <script type="module" src="js/main.js"></script>
+  <script>
+    document.getElementById("anioProyecto").textContent = new Date().getFullYear();
+  </script>
 
 </body>
 </html>

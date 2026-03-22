@@ -36,7 +36,7 @@
         <a href="#proyectos">Proyectos</a>
         <a href="#beneficios">Beneficios</a>
         <button class="btn btn-ghost btn-nosotros" id="btnNosotros" type="button">Nosotros</button>
-        <a href="#contacto">Contacto</a>
+        <button class="btn btn-ghost btn-contacto" id="btnContacto" type="button">Contacto</button>
         <a href="login.html">Panel</a>
       </nav>
     </div>
@@ -64,7 +64,7 @@
     <a href="#proyectos">Proyectos</a>
     <a href="#beneficios">Beneficios</a>
     <button class="btn btn-ghost btn-nosotros" id="btnNosotrosMobile" type="button">Nosotros</button>
-    <a href="#contacto">Contacto</a>
+    <button class="btn btn-ghost btn-contacto" id="btnContactoMobile" type="button">Contacto</button>
     <a href="login.html">Panel</a>
   </nav>
 </div>
@@ -155,12 +155,65 @@
       </div>
     </section>
   </div>
+
+  <footer class="footer nosotros-footer">
+    <div class="container footer-line">
+      <div class="footer-left">
+        SMR · Desarrollos Silmare S.A.
+      </div>
+
+      <div class="footer-right">
+        © <span id="anioNosotros"></span> Todos los derechos reservados
+      </div>
+    </div>
+  </footer>
+</section>
+
+<!-- Panel Contacto -->
+<section class="contacto-panel" id="contactoPanel" aria-hidden="true">
+  <header class="contacto-panel-head">
+    <div class="container contacto-panel-head-inner">
+      <h2>Contacto</h2>
+    </div>
+  </header>
+
+  <section class="contacto-hero">
+    <div class="contacto-overlay"></div>
+    <div class="container contacto-hero-inner">
+      <div class="contacto-copy">
+        <h2>¿Estás buscando una inversión segura y confiable?</h2>
+        <h3>Contactanos</h3>
+        <p>Los datos personales suministrados serán usados exclusivamente por Silmare y no serán cedidos ni transferidos.</p>
+      </div>
+
+      <form class="contacto-form" id="contactoForm" autocomplete="on">
+        <input id="contactoNombre" type="text" placeholder="Nombre completo*" required />
+        <input id="contactoEmail" type="email" placeholder="Email*" required />
+        <input id="contactoTelefono" type="tel" placeholder="Teléfono*" required />
+        <textarea id="contactoMensaje" rows="3" placeholder="Contanos un poco más (opcional)"></textarea>
+        <p class="contacto-status" id="contactoStatus" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary" id="contactoWpp" type="submit">Quiero más información</button>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer contacto-footer">
+    <div class="container footer-line">
+      <div class="footer-left">
+        SMR · Desarrollos Silmare S.A.
+      </div>
+
+      <div class="footer-right">
+        © <span id="anioContacto"></span> Todos los derechos reservados
+      </div>
+    </div>
+  </footer>
 </section>
 
 <!-- Hero -->
 <section class="hero2">
   <div class="container hero2-inner">
-    <div class="hero2-left">
+    <div class="hero2-left" data-reveal>
       <span class="pill">🌿 Naturaleza + 🏙️ Centro</span>
 
       <h2 class="hero-main-title">Viví cerca del mar, con tranquilidad y diseño.</h2>
@@ -170,14 +223,11 @@
         ubicaciones estratégicas, calidad y confort.
       </p>
 
-      <div class="hero2-cta">
-        <a class="btn btn-primary" href="#proyectos">Ver proyectos</a>
-        <a class="btn btn-ghost" href="#beneficios">¿Por qué elegirnos?</a>
-      </div>
+      <div class="hero2-cta"></div>
 
       <div class="hero2-metrics">
         <div class="metric">
-          <strong>+2</strong><span>Proyectos</span>
+          <strong id="metricProyectos">+0</strong><span>Proyectos</span>
         </div>
         <div class="metric">
           <strong>100%</strong><span>Enfoque en calidad</span>
@@ -188,7 +238,7 @@
       </div>
     </div>
 
-      <div class="hero2-right">
+      <div class="hero2-right" data-reveal>
         <div class="hero-card">
           <div class="hero-card-img" id="heroSlider">
             <button class="hero-nav prev" type="button" aria-label="Anterior">‹</button>
@@ -210,17 +260,17 @@
   <!-- Beneficios -->
   <section id="beneficios" class="features">
     <div class="container">
-      <h2 class="section-title">Lo que te vas a encontrar</h2>
+      <h2 class="section-title" data-reveal>Lo que te vas a encontrar</h2>
       <div class="features-grid">
-        <article class="feature">
+        <article class="feature" data-reveal>
           <h3>Ubicación inteligente</h3>
           <p>Cerca del mar, del centro y con accesos ágiles.</p>
         </article>
-        <article class="feature">
+        <article class="feature" data-reveal>
           <h3>Diseño y funcionalidad</h3>
           <p>Espacios pensados para vivir cómodo y moderno.</p>
         </article>
-        <article class="feature">
+        <article class="feature" data-reveal>
           <h3>Contacto directo</h3>
           <p>Consultá por WhatsApp con mensaje prearmado.</p>
         </article>
@@ -231,7 +281,7 @@
   <!-- Proyectos -->
   <main id="proyectos" class="proyectos2">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head" data-reveal>
         <div>
           <h2 class="section-title">Proyectos disponibles</h2>
           <p class="section-sub">Elegí un proyecto y mirá el detalle completo.</p>
@@ -242,9 +292,10 @@
         </div>
       </div>
 
-      <section id="gridProyectos" class="grid-proyectos2"></section>
+      <section id="gridProyectos" class="grid-proyectos2" data-reveal></section>
     </div>
   </main>
+
 
 
 <footer class="footer">

@@ -1,5 +1,6 @@
-﻿import { db } from "./firebase.js";
+﻿import { db, functions } from "./firebase.js";
 import { collection, getDocs, getDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -43,6 +44,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnNosotros = document.getElementById("btnNosotros");
   const btnNosotrosMobile = document.getElementById("btnNosotrosMobile");
   const panelNosotros = document.getElementById("nosotrosPanel");
+  const btnContacto = document.getElementById("btnContacto");
+  const btnContactoMobile = document.getElementById("btnContactoMobile");
+  const contactoPanel = document.getElementById("contactoPanel");
+  const anioContacto = document.getElementById("anioContacto");
+  const anioNosotros = document.getElementById("anioNosotros");
   const topbar = document.querySelector(".topbar");
 
   if (topbar) {
@@ -56,6 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const openNosotros = () => {
     if (!panelNosotros) return;
+    closeContactoPanel();
     document.body.classList.add("nosotros-open");
     panelNosotros.setAttribute("aria-hidden", "false");
     panelNosotros.scrollTop = 0;
@@ -68,6 +75,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     panelNosotros.setAttribute("aria-hidden", "true");
   };
 
+  const openContacto = () => {
+    if (!contactoPanel) return;
+    closeNosotrosPanel();
+    document.body.classList.add("contacto-open");
+    contactoPanel.setAttribute("aria-hidden", "false");
+    contactoPanel.scrollTop = 0;
+    setActiveNav("contacto");
+  };
+
+  const closeContactoPanel = () => {
+    if (!contactoPanel) return;
+    document.body.classList.remove("contacto-open");
+    contactoPanel.setAttribute("aria-hidden", "true");
+  };
+
   btnNosotros?.addEventListener("click", () => {
     openNosotros();
   });
@@ -77,12 +99,28 @@ document.addEventListener("DOMContentLoaded", async () => {
     openNosotros();
   });
 
+  btnContacto?.addEventListener("click", () => {
+    openContacto();
+  });
+
+  btnContactoMobile?.addEventListener("click", () => {
+    closeMenu();
+    openContacto();
+  });
+
   panelNosotros?.addEventListener("click", (e) => {
     if (e.target === panelNosotros) closeNosotrosPanel();
   });
 
+  contactoPanel?.addEventListener("click", (e) => {
+    if (e.target === contactoPanel) closeContactoPanel();
+  });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeNosotrosPanel();
+    if (e.key === "Escape") {
+      closeNosotrosPanel();
+      closeContactoPanel();
+    }
   });
 
   // Si estoy en Nosotros y navego a otra sección, cerrar panel
@@ -97,8 +135,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const setActiveNav = (id) => {
     document.querySelectorAll(".topnav a, .topnav button").forEach(el => {
       const isNos = el.id === "btnNosotros" && id === "nosotros";
+      const isCon = el.id === "btnContacto" && id === "contacto";
       const isHref = el.getAttribute("href") === `#${id}`;
-      el.classList.toggle("nav-active", isNos || isHref);
+      el.classList.toggle("nav-active", isNos || isCon || isHref);
     });
   };
 
@@ -115,6 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     a.addEventListener("click", (e) => {
       e.preventDefault();
       closeNosotrosPanel();
+      closeContactoPanel();
       const id = a.getAttribute("href")?.replace("#", "");
       if (!id) return;
       scrollToSection(id);
@@ -151,6 +191,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     revealEls.forEach(el => io.observe(el));
   }
 
+  // Reveal en index (scroll en el body)
+  const revealIndex = document.querySelectorAll("[data-reveal]");
+  revealIndex.forEach(el => el.classList.add("reveal"));
+  if (revealIndex.length) {
+    const ioIndex = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        entry.target.classList.toggle("is-visible", entry.isIntersecting);
+      });
+    }, { root: null, threshold: 0.2 });
+
+    revealIndex.forEach(el => ioIndex.observe(el));
+  }
+
   // ==================================================
   // 0) Cargar proyectos desde PANEL (localStorage) o data.js
   // ==================================================
@@ -165,6 +218,10 @@ async function cargarProyectosDesdeFirestore() {
 }
 
 await cargarProyectosDesdeFirestore();
+const metricProyectos = document.getElementById("metricProyectos");
+if (metricProyectos) {
+  metricProyectos.textContent = `+${PROYECTOS_APP.length || 0}`;
+}
 
   // ==================================================
   // 0.2) Cargar contenido Nosotros (general)
@@ -297,20 +354,83 @@ if (grid && PROYECTOS_APP.length) {
   const calidadSeccion = document.getElementById("calidadSeccion");
 
   const wppFloat = document.getElementById("wppFloat");
-  const contactoWpp = document.getElementById("contactoWpp");
-  if ((wppFloat || contactoWpp) && PROYECTOS_APP.length) {
+  const contactoForm = document.getElementById("contactoForm");
+  const contactoNombre = document.getElementById("contactoNombre");
+  const contactoEmail = document.getElementById("contactoEmail");
+  const contactoTelefono = document.getElementById("contactoTelefono");
+  const contactoMensaje = document.getElementById("contactoMensaje");
+  const contactoStatus = document.getElementById("contactoStatus");
+  if (wppFloat && PROYECTOS_APP.length) {
     const p0 = PROYECTOS_APP[0];
     if (p0?.whatsapp) {
       const msg = encodeURIComponent(
         p0.mensajeWpp || `Hola! Quiero info sobre ${p0.nombre}.`
       );
       const href = `https://wa.me/${p0.whatsapp}?text=${msg}`;
-      if (wppFloat) wppFloat.href = href;
-      if (contactoWpp) contactoWpp.href = href;
+      wppFloat.href = href;
     } else {
-      if (wppFloat) wppFloat.style.display = "none";
-      if (contactoWpp) contactoWpp.style.display = "none";
+      wppFloat.style.display = "none";
     }
+  }
+  // Contacto: enviar email con Firebase Functions
+  if (contactoForm) {
+    const setStatus = (msg, state = "") => {
+      if (!contactoStatus) return;
+      contactoStatus.textContent = msg;
+      if (state) contactoStatus.setAttribute("data-state", state);
+      else contactoStatus.removeAttribute("data-state");
+    };
+
+    contactoForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const nombre = (contactoNombre?.value || "").trim();
+      const email = (contactoEmail?.value || "").trim();
+      const tel = (contactoTelefono?.value || "").trim();
+      const mensaje = (contactoMensaje?.value || "").trim();
+
+      if (!nombre || !email || !tel) {
+        setStatus("Completá nombre, email y teléfono.", "err");
+        return;
+      }
+
+      const btn = contactoForm.querySelector('button[type="submit"]');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Enviando...";
+      }
+      setStatus("Enviando...", "info");
+
+      try {
+        const sendContactEmail = httpsCallable(functions, "sendContactEmail");
+        await sendContactEmail({
+          nombre,
+          email,
+          telefono: tel,
+          mensaje,
+          page: window.location.href,
+          referrer: document.referrer || "",
+          userAgent: navigator.userAgent,
+          timestamp: new Date().toISOString()
+        });
+        setStatus("Listo, te contactamos a la brevedad.", "ok");
+        contactoForm.reset();
+      } catch (err) {
+        console.error("Error enviando contacto:", err);
+        setStatus("No se pudo enviar. Probá de nuevo en unos minutos.", "err");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Quiero más información";
+        }
+      }
+    });
+  }
+
+  if (anioContacto) {
+    anioContacto.textContent = new Date().getFullYear();
+  }
+  if (anioNosotros) {
+    anioNosotros.textContent = new Date().getFullYear();
   }
 
   if (!titulo && !ubic && !desc && !listaUnidades) return;
@@ -393,7 +513,6 @@ if (grid && PROYECTOS_APP.length) {
     requestAnimationFrame(measureDesc);
     window.addEventListener("resize", measureDesc);
   }
-
   // CTA WhatsApp flotante (detalle)
   if (wppFloat && proyecto.whatsapp) {
     const msg = encodeURIComponent(
@@ -1048,5 +1167,12 @@ if (heroSlider && heroImg) {
     t = setInterval(() => showHero(hi + 1), 3500);
   });
 }
+
+
+
+
+
+
+
 
 
