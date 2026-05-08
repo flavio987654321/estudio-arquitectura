@@ -224,19 +224,27 @@
               </select>
             </div>
 
-            <div class="unidad-archivos">
-              <label>
-                Fotos de la unidad
-                <input id="u_fotos" type="file" accept="image/*" multiple />
-              </label>
-              <label>
-                PDF de la unidad
-                <input id="u_pdf" type="file" accept="application/pdf" />
-              </label>
-              <p class="muted small">Estos archivos se asignan a la unidad que agregues a continuaci?n.</p>
-              <div class="unidad-acciones">
-                <button class="btn" id="btnAgregarUnidad" type="button">Agregar</button>
-                <button class="btn btn-ghost is-hidden" id="btnCancelarEdicion" type="button">Cancelar</button>
+            <div class="unidad-acciones">
+              <button class="btn" id="btnAgregarUnidad" type="button">Agregar</button>
+              <button class="btn btn-ghost is-hidden" id="btnCancelarEdicion" type="button">Cancelar</button>
+            </div>
+
+            <!-- Archivos: solo visible al editar una unidad -->
+            <div class="unidad-archivos is-hidden" id="unidadArchivos">
+              <div class="panel-section-head" style="margin-top:16px;margin-bottom:8px">
+                <h4 style="margin:0;font-size:14px">Fotos y PDF de la unidad</h4>
+                <p class="muted small" style="margin:2px 0 0">Máx. 6 fotos · los cambios se guardan al tocar "Actualizar unidad"</p>
+              </div>
+              <div id="previewUnidadFotos" class="grid-fotos"></div>
+              <div class="form-row" style="margin-top:10px">
+                <label>
+                  Agregar fotos
+                  <input id="u_fotos" type="file" accept="image/*" multiple />
+                </label>
+                <label>
+                  PDF
+                  <input id="u_pdf" type="file" accept="application/pdf" />
+                </label>
               </div>
             </div>
 

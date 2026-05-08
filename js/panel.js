@@ -116,6 +116,14 @@ function iniciarPanel(user) {
   const btnGuardarNosotros = document.getElementById("btnGuardarNosotros");
   const panelMsgNosotros = document.getElementById("panelMsgNosotros");
 
+  // ===== AVANCES =====
+  const a_fecha = document.getElementById("a_fecha");
+  const a_media = document.getElementById("a_media");
+  const btnAgregarAvance = document.getElementById("btnAgregarAvance");
+  const listaAvancesPanel = document.getElementById("listaAvancesPanel");
+
+  let avancesData = [];
+
   // ===== FOTOS =====
   const inputFotos = document.getElementById("inputFotos");
   const btnLimpiarFotos = document.getElementById("btnLimpiarFotos");
@@ -148,6 +156,9 @@ function iniciarPanel(user) {
   const listaUnidadesPanel = document.getElementById("listaUnidadesPanel");
   const u_fotos = document.getElementById("u_fotos");
   const u_pdf = document.getElementById("u_pdf");
+  const previewUnidadFotos = document.getElementById("previewUnidadFotos");
+
+  const unidadArchivos = document.getElementById("unidadArchivos");
 
   const btnEliminar = document.getElementById("btnEliminar");
   const unidadSheet = document.getElementById("unidadSheet");
@@ -158,6 +169,7 @@ function iniciarPanel(user) {
   let proyectos = [];
   let activoId = null;
   let unidadFotosNuevas = [];
+  let unidadFotosExistentes = [];
   let unidadPdfNuevo = null;
   let unidadEditIndex = null;
   let unidadHighlightIndex = null;
@@ -252,9 +264,12 @@ function iniciarPanel(user) {
     u_estado.value = u.estado || "disponible";
 
     unidadFotosNuevas = [];
+    unidadFotosExistentes = Array.isArray(u.fotos) ? [...u.fotos] : [];
     unidadPdfNuevo = null;
     if (u_fotos) u_fotos.value = "";
     if (u_pdf) u_pdf.value = "";
+    renderUnidadFotosPreview();
+    if (unidadArchivos) unidadArchivos.classList.remove("is-hidden");
 
     if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Actualizar unidad";
     if (btnCancelarEdicion) btnCancelarEdicion.classList.remove("is-hidden");
@@ -467,6 +482,97 @@ function renderFotosPreview() {
     });
   }
 
+  function renderUnidadFotosPreview() {
+    if (!previewUnidadFotos) return;
+    previewUnidadFotos.innerHTML = "";
+
+    unidadFotosExistentes.forEach((url, idx) => {
+      const div = document.createElement("div");
+      div.className = "foto-item";
+      div.innerHTML = `
+        <img src="${url}" alt="foto unidad">
+        <button type="button" class="btn-x" title="Quitar">✕</button>
+        <div class="tag">Guardada</div>
+      `;
+      div.querySelector(".btn-x").onclick = () => {
+        unidadFotosExistentes.splice(idx, 1);
+        renderUnidadFotosPreview();
+      };
+      previewUnidadFotos.appendChild(div);
+    });
+
+    unidadFotosNuevas.forEach((file, idx) => {
+      const blobUrl = URL.createObjectURL(file);
+      const div = document.createElement("div");
+      div.className = "foto-item";
+      div.innerHTML = `
+        <img src="${blobUrl}" alt="foto nueva">
+        <button type="button" class="btn-x" title="Quitar">✕</button>
+        <div class="tag">Nueva</div>
+      `;
+      div.querySelector(".btn-x").onclick = () => {
+        unidadFotosNuevas.splice(idx, 1);
+        renderUnidadFotosPreview();
+      };
+      previewUnidadFotos.appendChild(div);
+    });
+  }
+
+  function renderAvancesPanel() {
+    if (!listaAvancesPanel) return;
+    listaAvancesPanel.innerHTML = "";
+    if (!avancesData.length) {
+      listaAvancesPanel.innerHTML = "<p class='muted small'>No hay avances cargados.</p>";
+      return;
+    }
+    const sorted = avancesData
+      .map((a, i) => ({ a, i }))
+      .sort((x, y) => (y.a.fecha || "").localeCompare(x.a.fecha || ""));
+
+    sorted.forEach(({ a, i }) => {
+      const isVideo = a.tipo === "video" || /\.(mp4|webm)($|\?)/i.test(a.mediaUrl || "");
+      const div = document.createElement("div");
+      div.className = "avance-panel-item";
+      div.innerHTML = `
+        <div class="avance-panel-media">
+          ${isVideo
+            ? `<video src="${a.mediaUrl}" muted playsinline class="avance-panel-thumb"></video>`
+            : `<img src="${a.mediaUrl}" alt="avance" class="avance-panel-thumb">`
+          }
+        </div>
+        <div class="avance-panel-info">
+          <span class="avance-panel-fecha">${a.fecha || "Sin fecha"}</span>
+          <span class="avance-panel-tipo">${isVideo ? "Video" : "Foto"}</span>
+        </div>
+        <button type="button" class="btn mini danger avance-del">Eliminar</button>
+      `;
+      div.querySelector(".avance-del").onclick = async () => {
+        if (!confirm("¿Eliminar este avance?")) return;
+        avancesData.splice(i, 1);
+        const p = getActivo();
+        if (p) p.avances = [...avancesData];
+        try {
+          await guardarAvancesEnFirestore(p);
+          setMsg("Avance eliminado ✅");
+        } catch (err) {
+          console.error(err);
+          setMsg("Error eliminando avance.");
+        }
+        renderAvancesPanel();
+      };
+      listaAvancesPanel.appendChild(div);
+    });
+  }
+
+  async function guardarAvancesEnFirestore(p) {
+    if (!p?.id) return;
+    await setDoc(
+      doc(db, "proyectos", p.id),
+      { avances: avancesData, updatedAt: serverTimestamp() },
+      { merge: true }
+    );
+  }
+
   function renderPlanosPreview() {
     if (!previewPlanos) return;
     previewPlanos.innerHTML = "";
@@ -639,6 +745,45 @@ function renderFotosPreview() {
     renderPlanosPreview();
   });
 
+  btnAgregarAvance?.addEventListener("click", async () => {
+    const p = getActivo();
+    if (!p) { setMsg("Seleccioná un proyecto primero."); return; }
+
+    const fecha = a_fecha?.value || "";
+    const file = a_media?.files?.[0] || null;
+
+    if (!fecha) { alert("Ingresá la fecha del avance."); return; }
+    if (!file) { alert("Seleccioná una foto o video."); return; }
+
+    const oldTxt = btnAgregarAvance.textContent;
+    btnAgregarAvance.disabled = true;
+    btnAgregarAvance.textContent = "Subiendo...";
+
+    try {
+      const ownerUid = auth.currentUser?.uid;
+      const basePath = ownerUid ? `proyectos/${ownerUid}/${p.id}` : `proyectos/${p.id}`;
+      const safeName = `${Date.now()}-${file.name}`.replace(/\s+/g, "-");
+      const url = await subirArchivoAStorage(file, `${basePath}/avances/${safeName}`);
+
+      const tipo = file.type.startsWith("video") ? "video" : "foto";
+      avancesData.push({ fecha, mediaUrl: url, tipo });
+      p.avances = [...avancesData];
+
+      await guardarAvancesEnFirestore(p);
+
+      if (a_fecha) a_fecha.value = "";
+      if (a_media) a_media.value = "";
+      renderAvancesPanel();
+      setMsg("Avance guardado ✅");
+    } catch (err) {
+      console.error(err);
+      alert("Error subiendo el avance.");
+    } finally {
+      btnAgregarAvance.disabled = false;
+      btnAgregarAvance.textContent = oldTxt;
+    }
+  });
+
   n_p1_foto?.addEventListener("change", () => {
     n_p1_foto_nueva = n_p1_foto.files?.[0] || null;
     renderNosotrosPreview();
@@ -678,11 +823,19 @@ function renderFotosPreview() {
   u_fotos?.addEventListener("change", () => {
     const files = Array.from(u_fotos.files || []);
     if (!files.length) return;
-    const MAX_FOTOS = 10;
-    unidadFotosNuevas = files.slice(0, MAX_FOTOS);
-    if (files.length > MAX_FOTOS) {
+    const MAX_FOTOS = 6;
+    const disponibles = MAX_FOTOS - (unidadFotosExistentes.length + unidadFotosNuevas.length);
+    if (disponibles <= 0) {
       alert(`Máximo ${MAX_FOTOS} fotos por unidad.`);
+      u_fotos.value = "";
+      return;
     }
+    unidadFotosNuevas.push(...files.slice(0, disponibles));
+    if (files.length > disponibles) {
+      alert(`Máximo ${MAX_FOTOS} fotos por unidad. Solo se agregaron ${disponibles}.`);
+    }
+    u_fotos.value = "";
+    renderUnidadFotosPreview();
   });
 
   u_pdf?.addEventListener("change", () => {
@@ -703,6 +856,9 @@ function renderFotosPreview() {
     p_whatsapp.value = "";
     p_mensajeWpp.value = "";
 
+    avancesData = [];
+    renderAvancesPanel();
+
     fotosExistentes = [];
     fotosNuevas = [];
     renderFotosPreview();
@@ -710,6 +866,12 @@ function renderFotosPreview() {
     planosExistentes = [];
     planosNuevos = [];
     renderPlanosPreview();
+
+    unidadFotosNuevas = [];
+    unidadFotosExistentes = [];
+    if (u_fotos) u_fotos.value = "";
+    renderUnidadFotosPreview();
+    if (unidadArchivos) unidadArchivos.classList.add("is-hidden");
 
     listaUnidadesPanel.innerHTML = "";
     unidadEditIndex = null;
@@ -737,6 +899,10 @@ function renderFotosPreview() {
     if (p_estado) p_estado.value = p.estadoObra || "en_obra";
     p_whatsapp.value = p.whatsapp || "";
     p_mensajeWpp.value = p.mensajeWpp || "";
+
+    // avances
+    avancesData = Array.isArray(p.avances) ? [...p.avances] : [];
+    renderAvancesPanel();
 
     // fotos
     fotosExistentes = Array.isArray(p.fotos) ? [...p.fotos] : [];
@@ -829,6 +995,7 @@ btnAgregarUnidad?.addEventListener("click", () => {
     estado: est
   };
 
+  nuevaUnidad.fotos = [...unidadFotosExistentes];
   if (fotosFiles.length) {
     nuevaUnidad.__fotosFiles = fotosFiles;
   }
@@ -856,9 +1023,12 @@ btnAgregarUnidad?.addEventListener("click", () => {
   if (u_piso) u_piso.value = "Planta baja";
   u_estado.value = "disponible";
   unidadFotosNuevas = [];
+  unidadFotosExistentes = [];
   unidadPdfNuevo = null;
   if (u_fotos) u_fotos.value = "";
   if (u_pdf) u_pdf.value = "";
+  renderUnidadFotosPreview();
+  if (unidadArchivos) unidadArchivos.classList.add("is-hidden");
 
   renderUnidades(p);
   const estabaEditando = unidadEditIndex !== null;
@@ -895,9 +1065,12 @@ btnCancelarEdicion?.addEventListener("click", () => {
   if (u_piso) u_piso.value = "Planta baja";
   u_estado.value = "disponible";
   unidadFotosNuevas = [];
+  unidadFotosExistentes = [];
   unidadPdfNuevo = null;
   if (u_fotos) u_fotos.value = "";
   if (u_pdf) u_pdf.value = "";
+  renderUnidadFotosPreview();
+  if (unidadArchivos) unidadArchivos.classList.add("is-hidden");
   if (btnAgregarUnidad) btnAgregarUnidad.textContent = "Agregar";
   btnCancelarEdicion.classList.add("is-hidden");
   setMsg("Edición cancelada.");

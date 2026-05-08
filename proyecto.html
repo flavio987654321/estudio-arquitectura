@@ -1,69 +1,114 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Detalle del proyecto</title>
+  <title>Proyecto — Silmare Desarrollos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 
-<body>
+<body class="proy-page">
 
-  <header class="topbar topbar-proyecto" style="display:flex; justify-content:space-between; align-items:center;">
-    <h1 style="margin:0;">Desarrollos Silmare S.A.</h1>
-
-    <a href="index.html" aria-label="Volver al inicio"
-       style="text-decoration:none; color:#111;">
-      ← Volver
-    </a>
+  <!-- Topbar con marca (igual al index) -->
+  <header class="topbar">
+    <div class="container topbar-inner topbar-row">
+      <div class="topbar-left">
+        <a class="topbar-brand" href="index.html">
+          <span class="topbar-icon" aria-hidden="true">SM</span>
+          <span class="topbar-brand-text">
+            <span class="topbar-brand-name">Silmare</span>
+            <span class="topbar-brand-sub">Desarrollos</span>
+          </span>
+        </a>
+      </div>
+      <div class="proy-topbar-right">
+        <span class="proy-nombre-chip" id="proyNombreChip" aria-hidden="true"></span>
+        <a href="index.html" class="btn btn-ghost proy-back-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+          </svg>
+          Proyectos
+        </a>
+      </div>
+    </div>
   </header>
 
-  <main class="proyecto-detalle">
-    <section class="hero-proyecto">
-
-      <!-- Fila superior: título + descripción (span 2 columnas) -->
-      <div class="hero-text">
-        <h2 id="tituloProyecto">Proyecto</h2>
-        <p class="texto" id="descProyecto">Descripción del proyecto...</p>
+  <!-- Hero banner del proyecto -->
+  <section class="proy-hero">
+    <div class="proy-hero-glow" aria-hidden="true"></div>
+    <div class="container proy-hero-inner">
+      <div class="proy-hero-meta">
+        <span class="proy-kicker">Silmare · Pinamar</span>
+        <span class="proy-estado-badge" id="proyEstadoBadge" hidden></span>
       </div>
+      <h1 class="proy-hero-title" id="tituloProyecto">Cargando proyecto…</h1>
+      <p class="proy-hero-desc" id="descProyecto"></p>
+    </div>
+  </section>
 
-      <!-- Columna izquierda: galería -->
-      <div class="col-izq">
+  <!-- Contenido principal -->
+  <main class="proy-main">
 
-        <!-- Galería -->
-        <div class="galeria" style="display:none">
-        <div class="galeria-main">
-          <button class="nav prev" aria-label="Anterior" type="button">‹</button>
-          <img id="galeriaImg" alt="Foto del proyecto" />
-          <button class="nav next" aria-label="Siguiente" type="button">›</button>
+    <!-- Galería + Info (2 columnas) -->
+    <div class="container">
+      <section class="hero-proyecto proy-layout">
+
+        <!-- Galería (columna izquierda, grande) -->
+        <div class="col-izq">
+          <div class="galeria" style="display:none">
+            <div class="galeria-main">
+              <button class="nav prev" aria-label="Anterior" type="button">‹</button>
+              <img id="galeriaImg" alt="Foto del proyecto" />
+              <button class="nav next" aria-label="Siguiente" type="button">›</button>
+            </div>
+            <div class="galeria-thumbs"></div>
+          </div>
         </div>
 
-        <!-- main.js llena miniaturas reales -->
-        <div class="galeria-thumbs"></div>
+        <!-- Info lateral (columna derecha) -->
+        <div class="info-proyecto">
+          <div class="acciones" id="accionesProyecto"></div>
         </div>
-      </div>
 
-      <!-- Info -->
-      <div class="info-proyecto">
-        <div class="acciones" id="accionesProyecto"></div>
-      </div>
-
-    </section>
+      </section>
+    </div>
 
     <!-- Calidad constructiva -->
-    <section class="seccion" id="calidadSeccion" style="display:none;">
-      <h3>Calidad constructiva</h3>
-      <div class="calidad-grid" id="calidadProyecto"></div>
-    </section>
+    <div class="container">
+      <section class="proy-seccion" id="calidadSeccion" style="display:none;">
+        <h2 class="proy-seccion-title">
+          <span class="proy-seccion-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+          </span>
+          Calidad constructiva
+        </h2>
+        <div class="calidad-grid" id="calidadProyecto"></div>
+      </section>
+    </div>
 
     <!-- Unidades -->
-    <section class="seccion">
-      <h3>Unidades</h3>
-      <div class="filtros-unidades" id="filtrosUnidades"></div>
-      <!-- main.js renderiza unidades acá -->
-      <div class="tabla-unidades" id="listaUnidades"></div>
-    </section>
+    <div class="container">
+      <section class="proy-seccion">
+        <div class="proy-seccion-head">
+          <h2 class="proy-seccion-title">
+            <span class="proy-seccion-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+            </span>
+            Unidades disponibles
+          </h2>
+          <div class="filtros-unidades proy-filtros" id="filtrosUnidades"></div>
+        </div>
+        <div class="tabla-unidades" id="listaUnidades"></div>
+      </section>
+    </div>
+
   </main>
 
   <!-- Lightbox fotos -->
@@ -74,54 +119,42 @@
     <button class="nav next" id="lightboxNext" aria-label="Siguiente" type="button">›</button>
   </div>
 
+  <!-- Botón WhatsApp flotante -->
   <a class="wpp-float" id="wppFloat" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path fill="currentColor" d="M20.52 3.48A11.94 11.94 0 0 0 12.04 0C5.41 0 .01 5.4.01 12.03c0 2.12.55 4.19 1.6 6.02L0 24l6.14-1.61a11.96 11.96 0 0 0 5.9 1.53h.01c6.63 0 12.03-5.4 12.03-12.03 0-3.21-1.25-6.23-3.52-8.41zM12.04 21.5h-.01a9.96 9.96 0 0 1-5.08-1.4l-.36-.21-3.64.95.97-3.55-.24-.36a9.92 9.92 0 1 1 8.36 4.57zm5.5-7.45c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.16-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.6.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.52 0 1.49 1.08 2.93 1.23 3.13.15.2 2.12 3.24 5.13 4.55.72.31 1.28.5 1.72.64.72.23 1.39.2 1.91.12.58-.09 1.77-.72 2.02-1.44.25-.71.25-1.32.17-1.44-.07-.12-.27-.2-.57-.35z"/>
-      </svg>
-    </a>
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M20.52 3.48A11.94 11.94 0 0 0 12.04 0C5.41 0 .01 5.4.01 12.03c0 2.12.55 4.19 1.6 6.02L0 24l6.14-1.61a11.96 11.96 0 0 0 5.9 1.53h.01c6.63 0 12.03-5.4 12.03-12.03 0-3.21-1.25-6.23-3.52-8.41zM12.04 21.5h-.01a9.96 9.96 0 0 1-5.08-1.4l-.36-.21-3.64.95.97-3.55-.24-.36a9.92 9.92 0 1 1 8.36 4.57zm5.5-7.45c-.3-.15-1.77-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.16-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.5-.9-.8-1.5-1.79-1.68-2.09-.17-.3-.02-.46.13-.6.14-.14.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.52 0 1.49 1.08 2.93 1.23 3.13.15.2 2.12 3.24 5.13 4.55.72.31 1.28.5 1.72.64.72.23 1.39.2 1.91.12.58-.09 1.77-.72 2.02-1.44.25-.71.25-1.32.17-1.44-.07-.12-.27-.2-.57-.35z"/>
+    </svg>
+  </a>
 
-  <!-- Panel / modal de PLANOS -->
+  <!-- Panel PLANOS -->
   <div class="lightbox" id="panelPlanos" aria-hidden="true">
     <button class="lightbox-close" id="planosClose" aria-label="Cerrar" type="button">✕</button>
-
     <button class="nav prev" id="planosPrev" aria-label="Anterior" type="button">‹</button>
     <img id="planosImg" alt="Plano ampliado" loading="lazy" />
     <button class="nav next" id="planosNext" aria-label="Siguiente" type="button">›</button>
-
     <div class="galeria-thumbs" id="planosThumbs" style="margin-top:14px;"></div>
   </div>
 
-  <!-- Panel / modal de AVANCES -->
+  <!-- Panel AVANCES -->
   <div class="lightbox" id="panelAvances" aria-hidden="true">
     <button class="lightbox-close" id="avancesClose" aria-label="Cerrar" type="button">✕</button>
-
     <div class="avance-viewer">
       <img id="avancesImg" alt="Avance" loading="lazy" />
       <video id="avancesVideo" controls playsinline></video>
     </div>
-
     <div class="galeria-thumbs" id="avancesThumbs" style="margin-top:14px;"></div>
   </div>
 
   <footer class="footer">
     <div class="container footer-line">
-      <div class="footer-left">
-        SMR · Desarrollos Silmare S.A.
-      </div>
-
-      <div class="footer-right">
-        © <span id="anioProyecto"></span> Todos los derechos reservados
-      </div>
+      <div class="footer-left">SMR · Desarrollos Silmare S.A.</div>
+      <div class="footer-right">© <span id="anioProyecto"></span> Todos los derechos reservados</div>
     </div>
   </footer>
 
-<script type="module" src="js/main.js"></script>
+  <script type="module" src="js/main.js"></script>
   <script>
     document.getElementById("anioProyecto").textContent = new Date().getFullYear();
   </script>
-
 </body>
 </html>
-
-
-

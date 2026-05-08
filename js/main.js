@@ -108,6 +108,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     openContacto();
   });
 
+  document.getElementById("btnContactoHero")?.addEventListener("click", () => {
+    openContacto();
+  });
+
   panelNosotros?.addEventListener("click", (e) => {
     if (e.target === panelNosotros) closeNosotrosPanel();
   });
@@ -406,16 +410,19 @@ if (grid && PROYECTOS_APP.length) {
   const contactoTelefono = document.getElementById("contactoTelefono");
   const contactoMensaje = document.getElementById("contactoMensaje");
   const contactoStatus = document.getElementById("contactoStatus");
-  if (wppFloat && PROYECTOS_APP.length) {
+  const ctaWppBtn = document.getElementById("ctaWppBtn");
+  if (PROYECTOS_APP.length) {
     const p0 = PROYECTOS_APP[0];
     if (p0?.whatsapp) {
       const msg = encodeURIComponent(
-        p0.mensajeWpp || `Hola! Quiero info sobre ${p0.nombre}.`
+        p0.mensajeWpp || `Hola! Quiero más información sobre sus proyectos.`
       );
       const href = `https://wa.me/${p0.whatsapp}?text=${msg}`;
-      wppFloat.href = href;
+      if (wppFloat) wppFloat.href = href;
+      if (ctaWppBtn) ctaWppBtn.href = href;
     } else {
-      wppFloat.style.display = "none";
+      if (wppFloat) wppFloat.style.display = "none";
+      if (ctaWppBtn) ctaWppBtn.style.display = "none";
     }
   }
   // Contacto: enviar email con Firebase Functions
@@ -489,8 +496,37 @@ if (grid && PROYECTOS_APP.length) {
   if (!proyecto) return;
 
   // Texto
-  titulo.textContent = proyecto.nombre || "Proyecto";
-  // Usamos una sola ubicación (dirección o ubicación) y la mostramos solo en la columna derecha
+  const nombreProyecto = proyecto.nombre || "Proyecto";
+  titulo.textContent = nombreProyecto;
+
+  // Título dinámico de la pestaña
+  document.title = `${nombreProyecto} — Silmare Desarrollos`;
+
+  // Chip del nombre en la topbar
+  const proyNombreChip = document.getElementById("proyNombreChip");
+  if (proyNombreChip) proyNombreChip.textContent = nombreProyecto;
+
+  // Badge de estado en el hero del proyecto
+  const proyEstadoBadge = document.getElementById("proyEstadoBadge");
+  if (proyEstadoBadge && proyecto.estadoObra) {
+    const normEstado = (proyecto.estadoObra || "").toString().toLowerCase().trim();
+    const estadoLabelsHero = {
+      en_obra: "En obra",
+      terminado: "Terminado",
+      en_pausa: "En pausa",
+      preventa: "Preventa"
+    };
+    const key = normEstado.includes("pausa") ? "en_pausa"
+      : normEstado.includes("termin") ? "terminado"
+      : normEstado.includes("pre") ? "preventa"
+      : normEstado.includes("obra") ? "en_obra"
+      : "";
+    if (key && estadoLabelsHero[key]) {
+      proyEstadoBadge.textContent = estadoLabelsHero[key];
+      proyEstadoBadge.hidden = false;
+    }
+  }
+
   const ubicacionFinal = proyecto.direccion || proyecto.ubicacion || "";
   if (ubic) {
     ubic.style.display = "none";

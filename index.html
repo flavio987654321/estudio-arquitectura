@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Proyectos Inmobiliarios</title>
+  <title>Silmare Desarrollos | Proyectos Inmobiliarios en Pinamar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <meta name="description" content="Proyectos inmobiliarios multifamiliares cerca del mar y del centro. Viví e invertí con tranquilidad, diseño y calidad." />
+  <meta name="description" content="Proyectos inmobiliarios multifamiliares en Pinamar. Viví e invertí cerca del mar con tranquilidad, diseño y calidad." />
 
-  <meta property="og:title" content="Proyectos Inmobiliarios" />
-  <meta property="og:description" content="Viví cerca del mar, con tranquilidad y diseño. Mirá proyectos disponibles y consultá por WhatsApp." />
+  <meta property="og:title" content="Silmare Desarrollos | Pinamar" />
+  <meta property="og:description" content="Viví cerca del mar en Pinamar, con tranquilidad y diseño. Mirá proyectos disponibles y consultá por WhatsApp." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://tudominio.com/" />
   <meta property="og:image" content="https://tudominio.com/assets/og.jpg" />
@@ -214,16 +216,22 @@
 <section class="hero2">
   <div class="container hero2-inner">
     <div class="hero2-left" data-reveal>
-      <span class="pill">🌿 Naturaleza + 🏙️ Centro</span>
+      <span class="pill pill-accent">
+        <span class="pill-dot"></span>
+        Proyectos disponibles · Pinamar
+      </span>
 
-      <h2 class="hero-main-title">Viví cerca del mar, con tranquilidad y diseño.</h2>
+      <h1 class="hero-main-title">Viví cerca del mar, con tranquilidad y <em class="text-accent">diseño.</em></h1>
 
       <p>
         Descubrí proyectos multifamiliares pensados para invertir y vivir mejor:
         ubicaciones estratégicas, calidad y confort.
       </p>
 
-      <div class="hero2-cta"></div>
+      <div class="hero2-cta">
+        <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+        <button class="btn btn-outline" id="btnContactoHero" type="button">Consultar</button>
+      </div>
 
       <div class="hero2-metrics">
         <div class="metric">
@@ -257,20 +265,61 @@
     </div>
   </section>
 
+  <!-- Stats strip -->
+  <section class="stats-strip">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <strong>+12</strong>
+          <span>Edificios entregados</span>
+        </div>
+        <div class="stat-item">
+          <strong>+20</strong>
+          <span>Años de experiencia</span>
+        </div>
+        <div class="stat-item">
+          <strong>100%</strong>
+          <span>Enfoque en calidad</span>
+        </div>
+        <div class="stat-item">
+          <strong>📍 Pinamar</strong>
+          <span>Ubicaciones premium</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Beneficios -->
   <section id="beneficios" class="features">
     <div class="container">
       <h2 class="section-title" data-reveal>Lo que te vas a encontrar</h2>
       <div class="features-grid">
         <article class="feature" data-reveal>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              <circle cx="12" cy="9" r="2.5"/>
+            </svg>
+          </div>
           <h3>Ubicación inteligente</h3>
           <p>Cerca del mar, del centro y con accesos ágiles.</p>
         </article>
         <article class="feature" data-reveal>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+          </div>
           <h3>Diseño y funcionalidad</h3>
           <p>Espacios pensados para vivir cómodo y moderno.</p>
         </article>
         <article class="feature" data-reveal>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
           <h3>Contacto directo</h3>
           <p>Consultá por WhatsApp con mensaje prearmado.</p>
         </article>
@@ -297,6 +346,22 @@
   </main>
 
 
+
+<!-- CTA strip -->
+<section class="cta-strip">
+  <div class="container cta-strip-inner">
+    <div class="cta-strip-copy">
+      <h2>¿Listo para dar el próximo paso?</h2>
+      <p>Consultanos y te ayudamos a encontrar la inversión ideal para vos.</p>
+    </div>
+    <a class="btn cta-strip-btn" id="ctaWppBtn" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="18" height="18">
+        <path fill="currentColor" d="M20.52 3.48A11.94 11.94 0 0 0 12.04 0C5.41 0 .01 5.4.01 12.03c0 2.12.55 4.19 1.6 6.02L0 24l6.14-1.61a11.96 11.96 0 0 0 5.9 1.53h.01c6.63 0 12.03-5.4 12.03-12.03 0-3.21-1.25-6.23-3.52-8.41z"/>
+      </svg>
+      Consultar por WhatsApp
+    </a>
+  </div>
+</section>
 
 <footer class="footer">
   <div class="container footer-line">
