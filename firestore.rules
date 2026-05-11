@@ -20,7 +20,8 @@ service cloud.firestore {
 
     match /site/{doc} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null
+        && request.auth.uid == "d7eIvCpo6rWyDMSIH04cvU2Yw723";
     }
   }
 }
