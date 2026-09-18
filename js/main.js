@@ -62,6 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openNosotros = () => {
     if (!panelNosotros) return;
     closeContactoPanel();
+    closeProyectosPanel();
     document.body.classList.add("nosotros-open");
     panelNosotros.setAttribute("aria-hidden", "false");
     panelNosotros.scrollTop = 0;
@@ -77,6 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const openContacto = () => {
     if (!contactoPanel) return;
     closeNosotrosPanel();
+    closeProyectosPanel();
     document.body.classList.add("contacto-open");
     contactoPanel.setAttribute("aria-hidden", "false");
     contactoPanel.scrollTop = 0;
@@ -188,6 +190,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       e.preventDefault();
       closeNosotrosPanel();
       closeContactoPanel();
+      closeProyectosPanel();
       const id = a.getAttribute("href")?.replace("#", "");
       if (!id) return;
       scrollToSection(id);
