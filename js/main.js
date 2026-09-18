@@ -3,10 +3,6 @@ import { collection, getDocs, getDoc, doc } from "https://www.gstatic.com/fireba
 import { httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-
-  // ==================================================
-  // 0) Menú hamburguesa (index)
-  // ==================================================
   const menuToggle = document.getElementById("menuToggle");
   const menuDrawer = document.getElementById("menuDrawer");
   const menuBackdrop = document.getElementById("menuBackdrop");
@@ -37,8 +33,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeMenu();
   });
-
-  // ==================================================
   // 0.1) Panel Nosotros (index)
   // ==================================================
   const btnNosotros = document.getElementById("btnNosotros");
@@ -47,6 +41,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnContacto = document.getElementById("btnContacto");
   const btnContactoMobile = document.getElementById("btnContactoMobile");
   const contactoPanel = document.getElementById("contactoPanel");
+  const btnProyectos = document.getElementById("btnProyectos");
+  const btnProyectosMobile = document.getElementById("btnProyectosMobile");
+  const btnVerTodosProyectos = document.getElementById("btnVerTodosProyectos");
+  const proyectosPanel = document.getElementById("proyectosPanel");
+  const proyectosPanelClose = document.getElementById("proyectosPanelClose");
   const anioContacto = document.getElementById("anioContacto");
   const anioNosotros = document.getElementById("anioNosotros");
   const topbar = document.querySelector(".topbar");
@@ -90,6 +89,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     contactoPanel.setAttribute("aria-hidden", "true");
   };
 
+  const openProyectos = () => {
+    if (!proyectosPanel) return;
+    closeNosotrosPanel();
+    closeContactoPanel();
+    document.body.classList.add("proyectos-open");
+    proyectosPanel.setAttribute("aria-hidden", "false");
+    proyectosPanel.scrollTop = 0;
+    setActiveNav("proyectos");
+  };
+
+  const closeProyectosPanel = () => {
+    if (!proyectosPanel) return;
+    document.body.classList.remove("proyectos-open");
+    proyectosPanel.setAttribute("aria-hidden", "true");
+  };
+
   btnNosotros?.addEventListener("click", () => {
     openNosotros();
   });
@@ -108,6 +123,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     openContacto();
   });
 
+  btnProyectos?.addEventListener("click", openProyectos);
+  btnProyectosMobile?.addEventListener("click", () => {
+    closeMenu();
+    openProyectos();
+  });
+  btnVerTodosProyectos?.addEventListener("click", openProyectos);
+  proyectosPanelClose?.addEventListener("click", closeProyectosPanel);
+
   document.getElementById("btnContactoHero")?.addEventListener("click", () => {
     openContacto();
   });
@@ -120,10 +143,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (e.target === contactoPanel) closeContactoPanel();
   });
 
+  proyectosPanel?.addEventListener("click", (e) => {
+    if (e.target === proyectosPanel) closeProyectosPanel();
+  });
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeNosotrosPanel();
       closeContactoPanel();
+      closeProyectosPanel();
     }
   });
 
@@ -133,15 +161,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   const sections = [
     document.getElementById("beneficios"),
-    document.getElementById("proyectos")
+    document.getElementById("proyectos-destacados")
   ].filter(Boolean);
 
   const setActiveNav = (id) => {
     document.querySelectorAll(".topnav a, .topnav button").forEach(el => {
       const isNos = el.id === "btnNosotros" && id === "nosotros";
       const isCon = el.id === "btnContacto" && id === "contacto";
+      const isPro = el.id === "btnProyectos" && id === "proyectos";
       const isHref = el.getAttribute("href") === `#${id}`;
-      el.classList.toggle("nav-active", isNos || isCon || isHref);
+      el.classList.toggle("nav-active", isNos || isCon || isPro || isHref);
     });
   };
 
@@ -167,10 +196,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // active por scroll
   window.addEventListener("scroll", () => {
-    const topbar = document.querySelector(".topbar");
-    const offset = (topbar?.getBoundingClientRect().height || 72) + 40;
+    const currentTopbar = document.querySelector(".topbar");
+    const offset = (currentTopbar?.getBoundingClientRect().height || 72) + 40;
     let current = "";
     sections.forEach(sec => {
       const top = sec.getBoundingClientRect().top - offset;
@@ -179,7 +207,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (current) setActiveNav(current);
   });
 
-  // Reveal on scroll (Nosotros)
   const revealEls = panelNosotros?.querySelectorAll(
     ".nosotros-head, .nosotros-card, .nosotros-mv, .nosotros-steps"
   ) || [];
@@ -195,7 +222,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     revealEls.forEach(el => io.observe(el));
   }
 
-  // Reveal en index (scroll en el body)
   const revealIndex = document.querySelectorAll("[data-reveal]");
   revealIndex.forEach(el => el.classList.add("reveal"));
   if (revealIndex.length) {
@@ -222,11 +248,6 @@ async function cargarProyectosDesdeFirestore() {
 }
 
 await cargarProyectosDesdeFirestore();
-const metricProyectos = document.getElementById("metricProyectos");
-if (metricProyectos) {
-  metricProyectos.textContent = `+${PROYECTOS_APP.length || 0}`;
-}
-
   // ==================================================
   // 0.2) Cargar contenido Nosotros (general)
   // ==================================================
@@ -311,18 +332,20 @@ if (metricProyectos) {
   // ==================================================
   // 1) INDEX.HTML -> Render listado
   // ==================================================
-const grid = document.getElementById("gridProyectos");
+const proyectosOrdenados = PROYECTOS_APP
+  .slice()
+  .sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0));
 
-if (grid && PROYECTOS_APP.length) {
+const renderProjectGrid = (grid, projects) => {
+if (grid && projects.length) {
 
   grid.innerHTML = "";
 
-  PROYECTOS_APP
-    .slice()
-    .sort((a, b) => (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0))
-    .forEach(p => {
+  projects.forEach(p => {
     const card = document.createElement("article");
-    card.className = "card-proyecto";
+    card.className = grid.id === "gridTodosProyectos"
+      ? "card-proyecto catalogo-card"
+      : "card-proyecto";
 
     const portada = Array.isArray(p.fotos) && p.fotos.length ? p.fotos[0] : "";
 
@@ -392,6 +415,10 @@ if (grid && PROYECTOS_APP.length) {
     grid.appendChild(card);
   });
 }
+};
+
+renderProjectGrid(document.getElementById("gridProyectos"), proyectosOrdenados.slice(0, 2));
+renderProjectGrid(document.getElementById("gridTodosProyectos"), proyectosOrdenados);
 
   // ==================================================
   // 2) PROYECTO.HTML
@@ -500,7 +527,7 @@ if (grid && PROYECTOS_APP.length) {
   titulo.textContent = nombreProyecto;
 
   // Título dinámico de la pestaña
-  document.title = `${nombreProyecto} — Silmare Desarrollos`;
+  document.title = `${nombreProyecto} — Olas`;
 
   // Chip del nombre en la topbar
   const proyNombreChip = document.getElementById("proyNombreChip");
@@ -609,10 +636,33 @@ if (grid && PROYECTOS_APP.length) {
   const infoProyecto = document.querySelector(".info-proyecto");
   if (infoProyecto) {
     if (proyecto.mapaEmbed) {
-      const mapa = document.createElement("div");
-      mapa.className = "mapa";
-      mapa.innerHTML = proyecto.mapaEmbed;
-      infoProyecto.appendChild(mapa);
+      const mapaDoc = new DOMParser().parseFromString(proyecto.mapaEmbed, "text/html");
+      const iframe = mapaDoc.body.querySelector("iframe");
+      const src = iframe?.getAttribute("src") || "";
+
+      try {
+        const mapaUrl = new URL(src, window.location.origin);
+        const dominiosPermitidos = new Set([
+          "www.google.com",
+          "www.google.com.ar",
+          "maps.google.com"
+        ]);
+
+        if (iframe && dominiosPermitidos.has(mapaUrl.hostname) && mapaUrl.pathname === "/maps/embed") {
+          const mapa = document.createElement("div");
+          mapa.className = "mapa";
+          const mapaSeguro = document.createElement("iframe");
+          mapaSeguro.src = mapaUrl.href;
+          mapaSeguro.loading = "lazy";
+          mapaSeguro.referrerPolicy = "no-referrer-when-downgrade";
+          mapaSeguro.setAttribute("allowfullscreen", "");
+          mapaSeguro.setAttribute("title", "Ubicación del proyecto");
+          mapa.appendChild(mapaSeguro);
+          infoProyecto.appendChild(mapa);
+        }
+      } catch {
+        console.warn("Mapa rechazado: URL no válida o dominio no permitido.");
+      }
     }
 
     if (ubicacionFinal) {
@@ -1211,44 +1261,6 @@ if (!proyecto.unidades || !proyecto.unidades.length) {
   panelPlanos?.addEventListener("touchend", (e) => onTouchEnd(e, "planos"), { passive: true });
 
 });
-
-// ==================================================
-// Slider hero (INDEX) - autoplay + flechas
-// ==================================================
-const heroSlider = document.getElementById("heroSlider");
-const heroImg = document.getElementById("heroSliderImg");
-
-if (heroSlider && heroImg) {
-  const imgs = [
-    "assets/orbis-logo.png",
-    "assets/hero2.jpg",
-    "assets/hero3.jpg",
-    "assets/hero4.jpg"
-  ];
-
-  let hi = 0;
-  heroImg.src = imgs[0];
-
-  const prev = heroSlider.querySelector(".hero-nav.prev");
-  const next = heroSlider.querySelector(".hero-nav.next");
-
-  const showHero = (i) => {
-    hi = (i + imgs.length) % imgs.length;
-    heroImg.src = imgs[hi];
-  };
-
-  prev?.addEventListener("click", () => showHero(hi - 1));
-  next?.addEventListener("click", () => showHero(hi + 1));
-
-  // autoplay
-  let t = setInterval(() => showHero(hi + 1), 3500);
-
-  // pausa cuando pasás el mouse
-  heroSlider.addEventListener("mouseenter", () => clearInterval(t));
-  heroSlider.addEventListener("mouseleave", () => {
-    t = setInterval(() => showHero(hi + 1), 3500);
-  });
-}
 
 
 

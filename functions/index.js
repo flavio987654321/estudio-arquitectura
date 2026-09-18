@@ -2,6 +2,13 @@
 const logger = require("firebase-functions/logger");
 const nodemailer = require("nodemailer");
 
+const escapeHtml = (value) => String(value)
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;")
+  .replace(/'/g, "&#039;");
+
 const getEnv = (key) => {
   const val = process.env[key];
   if (!val) {
@@ -40,6 +47,14 @@ exports.sendContactEmail = onCall(
         throw new HttpsError("invalid-argument", "Faltan datos obligatorios.");
       }
 
+      if (nombre.length > 120 || email.length > 254 || telefono.length > 40 || mensaje.length > 3000) {
+        throw new HttpsError("invalid-argument", "Uno de los campos supera el límite permitido.");
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        throw new HttpsError("invalid-argument", "El email no es válido.");
+      }
+
       const user = getEnv("GMAIL_USER");
       const to = process.env.CONTACT_TO || user;
 
@@ -68,21 +83,21 @@ exports.sendContactEmail = onCall(
       const html = `
         <div style="font-family:Arial,sans-serif; font-size:14px; color:#111;">
           <h2 style="margin:0 0 10px;">Nuevo contacto desde la web</h2>
-          <p style="margin:0 0 16px; color:#555;">${fecha}</p>
+          <p style="margin:0 0 16px; color:#555;">${escapeHtml(fecha)}</p>
           <table style="border-collapse:collapse; width:100%;">
-            <tr><td style="padding:6px 0; width:140px;"><strong>Nombre</strong></td><td>${nombre}</td></tr>
-            <tr><td style="padding:6px 0;"><strong>Email</strong></td><td>${email}</td></tr>
-            <tr><td style="padding:6px 0;"><strong>Teléfono</strong></td><td>${telefono}</td></tr>
-            ${mensaje ? `<tr><td style="padding:6px 0;"><strong>Mensaje</strong></td><td>${mensaje}</td></tr>` : ""}
-            ${page ? `<tr><td style="padding:6px 0;"><strong>Página</strong></td><td>${page}</td></tr>` : ""}
-            ${referrer ? `<tr><td style="padding:6px 0;"><strong>Referente</strong></td><td>${referrer}</td></tr>` : ""}
-            ${userAgent ? `<tr><td style="padding:6px 0;"><strong>Navegador</strong></td><td>${userAgent}</td></tr>` : ""}
+            <tr><td style="padding:6px 0; width:140px;"><strong>Nombre</strong></td><td>${escapeHtml(nombre)}</td></tr>
+            <tr><td style="padding:6px 0;"><strong>Email</strong></td><td>${escapeHtml(email)}</td></tr>
+            <tr><td style="padding:6px 0;"><strong>Teléfono</strong></td><td>${escapeHtml(telefono)}</td></tr>
+            ${mensaje ? `<tr><td style="padding:6px 0;"><strong>Mensaje</strong></td><td>${escapeHtml(mensaje)}</td></tr>` : ""}
+            ${page ? `<tr><td style="padding:6px 0;"><strong>Página</strong></td><td>${escapeHtml(page)}</td></tr>` : ""}
+            ${referrer ? `<tr><td style="padding:6px 0;"><strong>Referente</strong></td><td>${escapeHtml(referrer)}</td></tr>` : ""}
+            ${userAgent ? `<tr><td style="padding:6px 0;"><strong>Navegador</strong></td><td>${escapeHtml(userAgent)}</td></tr>` : ""}
           </table>
         </div>
       `;
 
       await transporter.sendMail({
-        from: `Silmare Web <${user}>`,
+        from: `Olas Estudio <${user}>`,
         to,
         replyTo: email,
         subject,

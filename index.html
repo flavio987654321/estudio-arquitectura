@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Silmare Desarrollos | Proyectos Inmobiliarios en Pinamar</title>
+  <title>Olas | Estudio de Arquitectura</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <meta name="description" content="Proyectos inmobiliarios multifamiliares en Pinamar. Viví e invertí cerca del mar con tranquilidad, diseño y calidad." />
+  <meta name="description" content="Olas crea espacios con identidad, luz y confort. Descubrí proyectos y propuestas de arquitectura pensadas para vivir mejor." />
 
-  <meta property="og:title" content="Silmare Desarrollos | Pinamar" />
-  <meta property="og:description" content="Viví cerca del mar en Pinamar, con tranquilidad y diseño. Mirá proyectos disponibles y consultá por WhatsApp." />
+  <meta property="og:title" content="Olas | Estudio de Arquitectura" />
+  <meta property="og:description" content="Espacios con identidad, luz y calidad. Proyectos de arquitectura pensados para vivir mejor." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://tudominio.com/" />
   <meta property="og:image" content="https://tudominio.com/assets/og.jpg" />
@@ -26,16 +26,16 @@
     <div class="topbar-left">
       <!-- Marca (izquierda) -->
       <a class="topbar-brand" href="index.html">
-        <span class="topbar-icon" aria-hidden="true">SM</span>
+        <span class="topbar-icon" aria-hidden="true">OL</span>
         <span class="topbar-brand-text">
-          <span class="topbar-brand-name">Silmare</span>
-          <span class="topbar-brand-sub">Desarrollos</span>
+          <span class="topbar-brand-name">Olas</span>
+          <span class="topbar-brand-sub">Estudio</span>
         </span>
       </a>
 
       <!-- Nav (desktop) -->
       <nav class="topnav topnav-desktop">
-        <a href="#proyectos">Proyectos</a>
+        <button class="btn btn-ghost btn-proyectos" id="btnProyectos" type="button">Proyectos</button>
         <a href="#beneficios">Beneficios</a>
         <button class="btn btn-ghost btn-nosotros" id="btnNosotros" type="button">Nosotros</button>
         <button class="btn btn-ghost btn-contacto" id="btnContacto" type="button">Contacto</button>
@@ -57,13 +57,13 @@
 <div class="menu-drawer" id="menuDrawer" aria-hidden="true">
   <div class="menu-head">
     <div class="menu-brand">
-      <span class="menu-brand-name">Silmare</span>
-      <span class="menu-brand-sub">Desarrollos</span>
+      <span class="menu-brand-name">Olas</span>
+      <span class="menu-brand-sub">Estudio</span>
     </div>
     <button class="menu-close" id="menuClose" type="button" aria-label="Cerrar menú">&times;</button>
   </div>
   <nav class="menu-nav">
-    <a href="#proyectos">Proyectos</a>
+    <button class="btn btn-ghost btn-proyectos" id="btnProyectosMobile" type="button">Proyectos</button>
     <a href="#beneficios">Beneficios</a>
     <button class="btn btn-ghost btn-nosotros" id="btnNosotrosMobile" type="button">Nosotros</button>
     <button class="btn btn-ghost btn-contacto" id="btnContactoMobile" type="button">Contacto</button>
@@ -88,71 +88,71 @@
     <div class="nosotros-grid">
       <article class="nosotros-card">
         <div class="nosotros-img">
-          <img id="persona1Img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Equipo Silmare - perfil 1" loading="lazy">
+          <img id="persona1Img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Equipo Olas - perfil 1" loading="lazy">
         </div>
-        <h3 id="persona1Name">Beltrán Briones</h3>
+        <h3 id="persona1Name">Mariano Olaso</h3>
         <ul id="persona1List">
-          <li>Cofundador de la desarrolladora inmobiliaria Silmare.</li>
-          <li>Supervisó la construcción y entrega de 12 edificios.</li>
-          <li>Orador en universidades y eventos del sector.</li>
+          <li>Arquitecto y referente del estudio Olas.</li>
+          <li>Especialista en viviendas y proyectos con identidad propia.</li>
+          <li>Enfoque en calidad, materialidad y bienestar.</li>
         </ul>
       </article>
 
       <article class="nosotros-card">
         <div class="nosotros-img">
-          <img id="persona2Img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Equipo Silmare - perfil 2" loading="lazy">
+          <img id="persona2Img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt="Equipo Olas - perfil 2" loading="lazy">
         </div>
-        <h3 id="persona2Name">Iván Briones</h3>
+        <h3 id="persona2Name">Equipo Olas</h3>
         <ul id="persona2List">
-          <li>Cofundador de la desarrolladora inmobiliaria Silmare.</li>
-          <li>20 años de experiencia en dirección y gestión.</li>
-          <li>Especialista en finanzas y desarrollo inmobiliario.</li>
+          <li>Estudio orientado a la arquitectura contemporánea.</li>
+          <li>Trabajo integral desde el concepto hasta la materialización.</li>
+          <li>Diseño pensado para habitar y perdurar.</li>
         </ul>
       </article>
     </div>
 
     <div class="nosotros-mv">
       <h3>Misión - Visión</h3>
-      <p><strong>Misión:</strong> <span id="misionText">Desarrollar edificios de excelentísima calidad, pensados para perdurar, con un nivel de diseño, ejecución y detalle que supere el estándar del mercado y cuide el valor de quienes confían en nosotros.</span></p>
-      <p><strong>Visión:</strong> <span id="visionText">Contribuir al cambio cultural y arquitectónico del país, elevando el estándar de la construcción y aportando valor a través de edificaciones que reflejen la identidad y el potencial de la Argentina.</span></p>
+      <p><strong>Misión:</strong> <span id="misionText">Crear espacios funcionales, sensibles a la luz y al contexto, donde la arquitectura mejora la calidad de vida y transmite una identidad clara.</span></p>
+      <p><strong>Visión:</strong> <span id="visionText">Ser un estudio reconocido por proyectos con carácter, coherencia y una fuerte relación entre diseño, materialidad y bienestar.</span></p>
     </div>
 
     <section class="nosotros-steps">
       <div class="nosotros-steps-head">
-        <h3 id="nosotrosStepsTitle">Lo que hace un desarrollador</h3>
-        <p id="nosotrosStepsSub">Seis etapas que garantizan excelencia de principio a fin.</p>
+        <h3 id="nosotrosStepsTitle">Cómo trabajamos</h3>
+        <p id="nosotrosStepsSub">Un proceso claro y pensado para cada proyecto.</p>
       </div>
 
       <div class="nosotros-steps-grid">
         <article class="step-card" data-step="0">
           <div class="step-num">01</div>
-          <h4>Análisis y adquisición</h4>
-          <p>Identificamos ubicaciones estratégicas con alto potencial de valorización. Cada terreno es evaluado exhaustivamente.</p>
+          <h4>Diagnóstico</h4>
+          <p>Analizamos el contexto, la función y las posibilidades reales del lugar para definir la dirección correcta.</p>
         </article>
         <article class="step-card" data-step="1">
           <div class="step-num">02</div>
-          <h4>Diseño arquitectónico</h4>
-          <p>Nuestro equipo de arquitectos crea espacios que combinan funcionalidad, estética y eficiencia energética.</p>
+          <h4>Concepto</h4>
+          <p>Desarrollamos la idea central del proyecto con claridad, identidad y una fuerte relación con el entorno.</p>
         </article>
         <article class="step-card" data-step="2">
           <div class="step-num">03</div>
-          <h4>Aprobaciones y permisos</h4>
-          <p>Gestionamos todos los trámites municipales y legales para garantizar un desarrollo sin contratiempos.</p>
+          <h4>Desarrollo</h4>
+          <p>Definimos la propuesta espacial, la organización y la composición arquitectónica con criterio técnico y estético.</p>
         </article>
         <article class="step-card" data-step="3">
           <div class="step-num">04</div>
-          <h4>Construcción</h4>
-          <p>Supervisión constante, materiales premium y cumplimiento estricto de plazos. Tu inversión en manos expertas.</p>
+          <h4>Detalle</h4>
+          <p>Trabajamos los materiales, proporciones y soluciones constructivas que hacen que el proyecto se sienta completo.</p>
         </article>
         <article class="step-card" data-step="4">
           <div class="step-num">05</div>
-          <h4>Comercialización</h4>
-          <p>Estrategias de venta transparentes con opciones de financiación flexibles para inversores y propietarios.</p>
+          <h4>Presentación</h4>
+          <p>Preparación de la propuesta con una narrativa clara para comunicar la idea con fuerza y precisión.</p>
         </article>
         <article class="step-card" data-step="5">
           <div class="step-num">06</div>
-          <h4>Entrega</h4>
-          <p>Inspección final, documentación completa y entrega de llaves. Tu nuevo hogar, listo para vivir.</p>
+          <h4>Materialización</h4>
+          <p>Acompañamos la ejecución para que el proyecto final refleje la intención original con coherencia y calidad.</p>
         </article>
       </div>
     </section>
@@ -161,7 +161,7 @@
   <footer class="footer nosotros-footer">
     <div class="container footer-line">
       <div class="footer-left">
-        SMR · Desarrollos Silmare S.A.
+        Olas · Estudio de Arquitectura
       </div>
 
       <div class="footer-right">
@@ -183,9 +183,9 @@
     <div class="contacto-overlay"></div>
     <div class="container contacto-hero-inner">
       <div class="contacto-copy">
-        <h2>¿Estás buscando una inversión segura y confiable?</h2>
-        <h3>Contactanos</h3>
-        <p>Los datos personales suministrados serán usados exclusivamente por Silmare y no serán cedidos ni transferidos.</p>
+        <h2>¿Buscás un proyecto con identidad y calidad?</h2>
+        <h3>Hablemos</h3>
+        <p>Compartinos tu idea y te ayudamos a definir la mejor propuesta para tu próximo espacio, con criterio, claridad y detalle.</p>
       </div>
 
       <form class="contacto-form" id="contactoForm" autocomplete="on">
@@ -202,7 +202,7 @@
   <footer class="footer contacto-footer">
     <div class="container footer-line">
       <div class="footer-left">
-        SMR · Desarrollos Silmare S.A.
+        Olas · Estudio de Arquitectura
       </div>
 
       <div class="footer-right">
@@ -212,168 +212,75 @@
   </footer>
 </section>
 
-<!-- Hero -->
-<section class="hero2">
-  <div class="container hero2-inner">
-    <div class="hero2-left" data-reveal>
-      <span class="pill pill-accent">
-        <span class="pill-dot"></span>
-        Proyectos disponibles · Pinamar
-      </span>
-
-      <h1 class="hero-main-title">Viví cerca del mar, con tranquilidad y <em class="text-accent">diseño.</em></h1>
-
-      <p>
-        Descubrí proyectos multifamiliares pensados para invertir y vivir mejor:
-        ubicaciones estratégicas, calidad y confort.
-      </p>
-
-      <div class="hero2-cta">
-        <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
-        <button class="btn btn-outline" id="btnContactoHero" type="button">Consultar</button>
-      </div>
-
-      <div class="hero2-metrics">
-        <div class="metric">
-          <strong id="metricProyectos">+0</strong><span>Proyectos</span>
-        </div>
-        <div class="metric">
-          <strong>100%</strong><span>Enfoque en calidad</span>
-        </div>
-        <div class="metric">
-          <strong>📍</strong><span>Ubicaciones top</span>
-        </div>
-      </div>
+<!-- Catálogo completo de proyectos -->
+<section class="proyectos-panel" id="proyectosPanel" aria-hidden="true">
+  <header class="proyectos-panel-head">
+    <div class="container proyectos-panel-head-inner">
+      <div class="proyectos-panel-title"><input id="buscadorCatalogo" class="catalogo-search-top" type="search" placeholder="Buscar proyecto o ubicación..." /><span class="proyectos-panel-kicker">Olas · catálogo</span><h2>Todos los proyectos</h2><p>Explorá casas y espacios pensados para vivir en contacto con el paisaje.</p></div>
+      <button class="proyectos-panel-close" id="proyectosPanelClose" type="button" aria-label="Cerrar proyectos">&times;</button>
     </div>
-
-      <div class="hero2-right" data-reveal>
-        <div class="hero-card">
-          <div class="hero-card-img" id="heroSlider">
-            <button class="hero-nav prev" type="button" aria-label="Anterior">‹</button>
-            <img id="heroSliderImg" alt="Imagen destacada" loading="lazy">
-            <button class="hero-nav next" type="button" aria-label="Siguiente">›</button>
-          </div>
-
-          <div class="hero-card-body">
-            <strong>Explorá por proyecto</strong>
-            <span>Fotos, unidades y contacto directo por WhatsApp.</span>
-          </div>
-        </div>
-
-        <div class="hero-glow"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats strip -->
-  <section class="stats-strip">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-item">
-          <strong>+12</strong>
-          <span>Edificios entregados</span>
-        </div>
-        <div class="stat-item">
-          <strong>+20</strong>
-          <span>Años de experiencia</span>
-        </div>
-        <div class="stat-item">
-          <strong>100%</strong>
-          <span>Enfoque en calidad</span>
-        </div>
-        <div class="stat-item">
-          <strong>📍 Pinamar</strong>
-          <span>Ubicaciones premium</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Beneficios -->
-  <section id="beneficios" class="features">
-    <div class="container">
-      <h2 class="section-title" data-reveal>Lo que te vas a encontrar</h2>
-      <div class="features-grid">
-        <article class="feature" data-reveal>
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              <circle cx="12" cy="9" r="2.5"/>
-            </svg>
-          </div>
-          <h3>Ubicación inteligente</h3>
-          <p>Cerca del mar, del centro y con accesos ágiles.</p>
-        </article>
-        <article class="feature" data-reveal>
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <path d="M3 9h18M9 21V9"/>
-            </svg>
-          </div>
-          <h3>Diseño y funcionalidad</h3>
-          <p>Espacios pensados para vivir cómodo y moderno.</p>
-        </article>
-        <article class="feature" data-reveal>
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-          </div>
-          <h3>Contacto directo</h3>
-          <p>Consultá por WhatsApp con mensaje prearmado.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- Proyectos -->
-  <main id="proyectos" class="proyectos2">
-    <div class="container">
-      <div class="section-head" data-reveal>
-        <div>
-          <h2 class="section-title">Proyectos disponibles</h2>
-          <p class="section-sub">Elegí un proyecto y mirá el detalle completo.</p>
-        </div>
-
-        <div class="search">
-          <input id="buscador" type="search" placeholder="Buscar por nombre o ubicación..." />
-        </div>
-      </div>
-
-      <section id="gridProyectos" class="grid-proyectos2" data-reveal></section>
-    </div>
-  </main>
-
-
-
-<!-- CTA strip -->
-<section class="cta-strip">
-  <div class="container cta-strip-inner">
-    <div class="cta-strip-copy">
-      <h2>¿Listo para dar el próximo paso?</h2>
-      <p>Consultanos y te ayudamos a encontrar la inversión ideal para vos.</p>
-    </div>
-    <a class="btn cta-strip-btn" id="ctaWppBtn" href="#" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="18" height="18">
-        <path fill="currentColor" d="M20.52 3.48A11.94 11.94 0 0 0 12.04 0C5.41 0 .01 5.4.01 12.03c0 2.12.55 4.19 1.6 6.02L0 24l6.14-1.61a11.96 11.96 0 0 0 5.9 1.53h.01c6.63 0 12.03-5.4 12.03-12.03 0-3.21-1.25-6.23-3.52-8.41z"/>
-      </svg>
-      Consultar por WhatsApp
-    </a>
+  </header>
+  <div class="container proyectos-catalogo-body">
+    <div class="catalogo-intro"><div class="catalogo-filters" aria-label="Filtrar proyectos"><button class="catalogo-filter is-active" data-filter="todos" type="button">Todos</button><button class="catalogo-filter" data-filter="vivienda" type="button">Viviendas</button><button class="catalogo-filter" data-filter="obra" type="button">En obra</button><button class="catalogo-filter" data-filter="terminado" type="button">Terminados</button></div></div>
+    <section id="gridTodosProyectos" class="catalogo-grid"></section>
   </div>
 </section>
 
-<footer class="footer">
-  <div class="container footer-line">
-    <div class="footer-left">
-      SMR · Desarrollos Silmare S.A.
+<!-- Home hero -->
+<main id="home" aria-label="Inicio">
+  <section class="olas-hero">
+    <img class="olas-hero-image" src="assets/hero-olas.jpg" alt="Interior de una casa de lujo con vista al bosque de Pinamar">
+    <div class="olas-hero-overlay"></div>
+    <div class="container olas-hero-content">
+      <p class="olas-hero-eyebrow">OLAS · ESTUDIO DE ARQUITECTURA</p>
+      <h1>Diseñamos espacios<br>para vivir mejor.</h1>
+      <p class="olas-hero-copy">Arquitectura con identidad, contexto y una mirada puesta en cómo querés habitar.</p>
+      <a class="olas-hero-button" href="#beneficios">Conocé Olas</a>
     </div>
+    <div class="olas-hero-scroll" aria-hidden="true"><span></span> Descubrí nuestros proyectos</div>
+  </section>
 
-    <div class="footer-right">
-      © <span id="anio"></span> Todos los derechos reservados
+  <section class="stats-strip">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item"><strong>+12</strong><span>Edificios entregados</span></div>
+        <div class="stat-item"><strong>+20</strong><span>Años de experiencia</span></div>
+        <div class="stat-item"><strong>100%</strong><span>Enfoque en calidad</span></div>
+        <div class="stat-item"><strong>OL</strong><span>Arquitectura con criterio</span></div>
+      </div>
     </div>
-  </div>
-</footer>
+  </section>
+
+  <section id="beneficios" class="features">
+    <div class="container">
+      <h2 class="section-title" data-reveal>Arquitectura pensada para vivir mejor</h2>
+      <div class="features-grid">
+        <article class="feature" data-reveal><div class="feature-icon">01</div><h3>Contexto y ubicación</h3><p>Diseñamos cada proyecto pensando en el lugar, la luz y la forma de habitarlo.</p></article>
+        <article class="feature" data-reveal><div class="feature-icon">02</div><h3>Funcionalidad real</h3><p>Espacios cómodos, claros y eficaces, sin perder una fuerte identidad estética.</p></article>
+        <article class="feature" data-reveal><div class="feature-icon">03</div><h3>Comunicación clara</h3><p>Te acompañamos con un proceso cercano, ordenado y orientado a decisiones inteligentes.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="brand-story">
+    <div class="container brand-story-inner">
+      <div class="brand-story-copy" data-reveal><p class="eyebrow">Nuestra forma de proyectar</p><h2>Arquitectura que entiende la vida cotidiana.</h2><p>Trabajamos desde la idea hasta el detalle final, buscando una propuesta clara, cálida y duradera.</p></div>
+      <div class="brand-story-panel" data-reveal><div class="mini-metric"><strong>01</strong><span>Diseño con intención</span></div><div class="mini-metric"><strong>02</strong><span>Materiales con sentido</span></div><div class="mini-metric"><strong>03</strong><span>Espacios para vivir bien</span></div></div>
+    </div>
+  </section>
+
+  <section id="proyectos-destacados" class="proyectos2">
+    <div class="container">
+      <div class="section-head" data-reveal><div><h2 class="section-title">Proyectos destacados</h2><p class="section-sub">Una primera mirada a nuestro trabajo.</p></div></div>
+      <section id="gridProyectos" class="grid-proyectos2" data-reveal></section>
+      <button class="catalogo-more" id="btnVerTodosProyectos" type="button">Ver todos los proyectos</button>
+    </div>
+  </section>
+
+  <section class="cta-strip"><div class="container cta-strip-inner"><div class="cta-strip-copy"><h2>¿Querés empezar tu próximo proyecto?</h2><p>Hablemos de tu idea y de la mejor forma de materializarla con claridad y calidad.</p></div><a class="btn cta-strip-btn" id="ctaWppBtn" href="#" target="_blank" rel="noopener">Hablemos</a></div></section>
+</main>
+
+<footer class="footer"><div class="container footer-line"><div class="footer-left">Olas · Estudio de Arquitectura</div><div class="footer-right">© <span id="anio"></span> Todos los derechos reservados</div></div></footer>
 
 <a class="wpp-float" id="wppFloat" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -383,17 +290,38 @@
 
 <script type="module" src="js/main.js"></script>
 
-  <script>
-    document.getElementById("anio").textContent = new Date().getFullYear();
-    const input = document.getElementById("buscador");
-    input?.addEventListener("input", () => {
-      const q = input.value.toLowerCase().trim();
-      document.querySelectorAll(".card-proyecto").forEach(card => {
-        const txt = card.innerText.toLowerCase();
-        card.style.display = txt.includes(q) ? "" : "none";
+<script>
+  document.getElementById("anio").textContent = new Date().getFullYear();
+  const input = document.getElementById("buscador");
+  input?.addEventListener("input", () => {
+    const q = input.value.toLowerCase().trim();
+    document.querySelectorAll(".card-proyecto").forEach(card => {
+      card.style.display = card.innerText.toLowerCase().includes(q) ? "" : "none";
+    });
+  });
+
+  const catalogoInput = document.getElementById("buscadorCatalogo");
+  catalogoInput?.addEventListener("input", () => {
+    const query = catalogoInput.value.toLowerCase().trim();
+    document.querySelectorAll("#gridTodosProyectos .card-proyecto").forEach(card => {
+      card.style.display = card.innerText.toLowerCase().includes(query) ? "" : "none";
+    });
+  });
+
+  document.querySelectorAll(".catalogo-filter").forEach(filterButton => {
+    filterButton.addEventListener("click", () => {
+      document.querySelectorAll(".catalogo-filter").forEach(button => button.classList.remove("is-active"));
+      filterButton.classList.add("is-active");
+      const filter = filterButton.dataset.filter;
+      document.querySelectorAll("#gridTodosProyectos .card-proyecto").forEach(card => {
+        const text = card.innerText.toLowerCase();
+        const matches = filter === "todos" || (filter === "vivienda" && text.includes("proyecto")) || text.includes(filter);
+        card.style.display = matches ? "" : "none";
       });
     });
-  </script>
+  });
+</script>
+
 </body>
 </html>
 

@@ -1,27 +1,29 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.uid == "d7eIvCpo6rWyDMSIH04cvU2Yw723";
+    }
 
     match /proyectos/{id} {
       allow read: if true;
 
-      // crear: owner debe ser el usuario
-      allow create: if request.auth != null
+      allow create: if isAdmin()
         && request.resource.data.owner == request.auth.uid;
 
       // update/delete: owner existente debe ser el usuario, y no se puede cambiar
-      allow update: if request.auth != null
+      allow update: if isAdmin()
         && resource.data.owner == request.auth.uid
         && request.resource.data.owner == resource.data.owner;
 
-      allow delete: if request.auth != null
+      allow delete: if isAdmin()
         && resource.data.owner == request.auth.uid;
     }
 
     match /site/{doc} {
       allow read: if true;
-      allow write: if request.auth != null
-        && request.auth.uid == "d7eIvCpo6rWyDMSIH04cvU2Yw723";
+      allow write: if isAdmin();
     }
   }
 }

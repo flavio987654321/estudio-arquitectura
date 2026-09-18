@@ -9,10 +9,15 @@ service firebase.storage {
       return signedIn() && request.auth.uid == uid;
     }
 
+    function isAdmin() {
+      return signedIn()
+        && request.auth.uid == "d7eIvCpo6rWyDMSIH04cvU2Yw723";
+    }
+
     // proyectos/{uid}/{proyectoId}/...
     match /proyectos/{uid}/{allPaths=**} {
       allow read: if true;
-      allow write: if isOwner(uid)
+      allow write: if isAdmin() && isOwner(uid)
         && (
           (request.resource.contentType.matches('image/.*') && request.resource.size < 10 * 1024 * 1024)
           || (request.resource.contentType == 'application/pdf' && request.resource.size < 10 * 1024 * 1024)
@@ -23,7 +28,7 @@ service firebase.storage {
     // site/nosotros/...
     match /site/nosotros/{allPaths=**} {
       allow read: if true;
-      allow write: if signedIn()
+      allow write: if isAdmin()
         && request.resource.size < 10 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
     }
